@@ -1,4 +1,5 @@
-import { Star, GitFork, ExternalLink, AlertCircle, Code2 } from "lucide-react";
+import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
 
 const langColors: Record<string, string> = {
@@ -78,7 +79,20 @@ interface RepoDetailProps {
 }
 
 export function RepoDetail({ repo }: RepoDetailProps) {
+  const navigate = useNavigate();
   const dotColor = repo.language ? langColors[repo.language] || "hsl(var(--muted-foreground))" : undefined;
+
+  const openAnalysis = () => {
+    const params = new URLSearchParams({
+      name: repo.name,
+      desc: repo.description || "",
+      lang: repo.language || "",
+      url: repo.html_url,
+      owner: repo.owner.login,
+      avatar: repo.owner.avatar_url,
+    });
+    navigate(`/analysis?${params.toString()}`);
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -93,15 +107,24 @@ export function RepoDetail({ repo }: RepoDetailProps) {
           <h2 className="text-2xl font-bold neon-text truncate">{repo.name}</h2>
           <p className="text-muted-foreground text-sm mt-1">by {repo.owner.login}</p>
         </div>
-        <a
-          href={repo.html_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
-        >
-          <ExternalLink className="w-4 h-4" />
-          GitHub
-        </a>
+        <div className="flex gap-2">
+          <button
+            onClick={openAnalysis}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors text-sm font-medium"
+          >
+            <Sparkles className="w-4 h-4" />
+            AI Phân tích
+          </button>
+          <a
+            href={repo.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
+          >
+            <ExternalLink className="w-4 h-4" />
+            GitHub
+          </a>
+        </div>
       </div>
 
       {/* Description */}
