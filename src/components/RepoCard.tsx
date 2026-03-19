@@ -79,7 +79,20 @@ interface RepoDetailProps {
 }
 
 export function RepoDetail({ repo }: RepoDetailProps) {
+  const navigate = useNavigate();
   const dotColor = repo.language ? langColors[repo.language] || "hsl(var(--muted-foreground))" : undefined;
+
+  const openAnalysis = () => {
+    const params = new URLSearchParams({
+      name: repo.name,
+      desc: repo.description || "",
+      lang: repo.language || "",
+      url: repo.html_url,
+      owner: repo.owner.login,
+      avatar: repo.owner.avatar_url,
+    });
+    navigate(`/analysis?${params.toString()}`);
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
