@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Plus, Archive, Trash2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RepoCard, RepoDetail } from "@/components/RepoCard";
 import { fetchRepoInfo, type RepoInfo } from "@/lib/github";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [repos, setRepos] = useState<RepoInfo[]>([]);
@@ -13,6 +14,43 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+
+  // Load repos from database on mount
+  useEffect(() => {
+    const loadRepos = async () => {
+      const { data, error } = await supabase
+        .from("saved_repos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error loading repos:", error);
+        return;
+      }
+
+      if (data) {
+        const mapped: RepoInfo[] = data.map((r) => ({
+          id: r.github_id,
+          name: r.name,
+          full_name: r.full_name,
+          description: r.description,
+          html_url: r.html_url,
+          stargazers_count: r.stargazers_count,
+          forks_count: r.forks_count,
+          language: r.language,
+          owner: {
+            login: r.owner_login,
+            avatar_url: r.owner_avatar_url,
+          },
+          topics: r.topics || [],
+          updated_at: r.updated_at,
+          open_issues_count: r.open_issues_count,
+        }));
+        setRepos(mapped);
+      }
+    };
+    loadRepos();
+  }, []);
 
   const addRepo = useCallback(async () => {
     if (!url.trim()) return;
@@ -23,10 +61,34 @@ const Index = () => {
         toast({ title: "Repo đã tồn tại trong kho!", variant: "destructive" });
         return;
       }
+
+      // Save to database
+      const { error } = await supabase.from("saved_repos").insert({
+        github_id: repo.id,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description,
+        html_url: repo.html_url,
+        stargazers_count: repo.stargazers_count,
+        forks_count: repo.forks_count,
+        language: repo.language,
+        owner_login: repo.owner.login,
+        owner_avatar_url: repo.owner.avatar_url,
+        topics: repo.topics || [],
+        updated_at: repo.updated_at,
+        open_issues_count: repo.open_issues_count,
+      });
+
+      if (error) {
+        console.error("Error saving repo:", error);
+        toast({ title: "Lỗi khi lưu repo!", variant: "destructive" });
+        return;
+      }
+
       setRepos((prev) => [repo, ...prev]);
       setSelected(repo.id);
       setUrl("");
-      toast({ title: "Đã thêm repo thành công!" });
+      toast({ title: "Đã thêm và lưu repo thành công!" });
     } catch {
       toast({ title: "Không thể tải repo. Kiểm tra lại link!", variant: "destructive" });
     } finally {
@@ -34,7 +96,18 @@ const Index = () => {
     }
   }, [url, repos, toast]);
 
-  const removeRepo = (id: number) => {
+  const removeRepo = async (id: number) => {
+    const { error } = await supabase
+      .from("saved_repos")
+      .delete()
+      .eq("github_id", id);
+
+    if (error) {
+      console.error("Error deleting repo:", error);
+      toast({ title: "Lỗi khi xóa repo!", variant: "destructive" });
+      return;
+    }
+
     setRepos((prev) => prev.filter((r) => r.id !== id));
     if (selected === id) setSelected(null);
   };
