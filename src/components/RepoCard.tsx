@@ -107,15 +107,24 @@ export function RepoDetail({ repo }: RepoDetailProps) {
           <h2 className="text-2xl font-bold neon-text truncate">{repo.name}</h2>
           <p className="text-muted-foreground text-sm mt-1">by {repo.owner.login}</p>
         </div>
-        <a
-          href={repo.html_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
-        >
-          <ExternalLink className="w-4 h-4" />
-          GitHub
-        </a>
+        <div className="flex gap-2">
+          <button
+            onClick={openAnalysis}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors text-sm font-medium"
+          >
+            <Sparkles className="w-4 h-4" />
+            AI Phân tích
+          </button>
+          <a
+            href={repo.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
+          >
+            <ExternalLink className="w-4 h-4" />
+            GitHub
+          </a>
+        </div>
       </div>
 
       {/* Description */}
