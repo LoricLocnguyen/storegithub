@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      saved_repos: {
+        Row: {
+          created_at: string
+          description: string | null
+          forks_count: number
+          full_name: string
+          github_id: number
+          html_url: string
+          id: string
+          language: string | null
+          name: string
+          open_issues_count: number
+          owner_avatar_url: string
+          owner_login: string
+          stargazers_count: number
+          topics: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          forks_count?: number
+          full_name: string
+          github_id: number
+          html_url: string
+          id?: string
+          language?: string | null
+          name: string
+          open_issues_count?: number
+          owner_avatar_url: string
+          owner_login: string
+          stargazers_count?: number
+          topics?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          forks_count?: number
+          full_name?: string
+          github_id?: number
+          html_url?: string
+          id?: string
+          language?: string | null
+          name?: string
+          open_issues_count?: number
+          owner_avatar_url?: string
+          owner_login?: string
+          stargazers_count?: number
+          topics?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
