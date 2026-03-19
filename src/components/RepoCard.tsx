@@ -1,4 +1,5 @@
-import { Star, GitFork, ExternalLink, AlertCircle, Code2 } from "lucide-react";
+import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
 
 const langColors: Record<string, string> = {
