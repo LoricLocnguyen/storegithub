@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Archive, Trash2, Search } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RepoCard, RepoDetail } from "@/components/RepoCard";
