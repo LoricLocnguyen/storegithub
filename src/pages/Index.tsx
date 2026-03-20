@@ -15,6 +15,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Load repos from database on mount
   useEffect(() => {
