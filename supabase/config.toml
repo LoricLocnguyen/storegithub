@@ -1,1 +1,4 @@
 project_id = "morowpjzdbnjzgxrauhn"
+
+[functions.analyze-airdrop]
+verify_jwt = false
