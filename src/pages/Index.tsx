@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Archive, Trash2, Search } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RepoCard, RepoDetail } from "@/components/RepoCard";
@@ -14,6 +15,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Load repos from database on mount
   useEffect(() => {
@@ -126,6 +128,13 @@ const Index = () => {
       <header className="glass border-b border-border/50 px-6 py-4 flex items-center gap-4 sticky top-0 z-20">
         <Archive className="w-7 h-7 text-primary animate-pulse-glow" />
         <h1 className="text-xl font-bold neon-text">Kho Đồ GitHub</h1>
+        <button
+          onClick={() => navigate("/airdrop")}
+          className="ml-2 w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center hover:bg-accent/30 hover:scale-110 transition-all duration-300 group"
+          title="Kho Airdrop"
+        >
+          <Zap className="w-5 h-5 text-accent group-hover:animate-pulse" />
+        </button>
         <div className="flex-1" />
         <span className="text-xs text-muted-foreground font-mono">
           {repos.length} repo{repos.length !== 1 && "s"}
