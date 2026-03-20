@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      airdrop_projects: {
+        Row: {
+          blockchain: string | null
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          discord_url: string | null
+          end_date: string | null
+          estimated_value: string | null
+          funding: string | null
+          guide: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          start_date: string | null
+          status: string
+          twitter_url: string | null
+          website_url: string | null
+        }
+        Insert: {
+          blockchain?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          discord_url?: string | null
+          end_date?: string | null
+          estimated_value?: string | null
+          funding?: string | null
+          guide?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          start_date?: string | null
+          status?: string
+          twitter_url?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          blockchain?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          discord_url?: string | null
+          end_date?: string | null
+          estimated_value?: string | null
+          funding?: string | null
+          guide?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          start_date?: string | null
+          status?: string
+          twitter_url?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       saved_repos: {
         Row: {
           created_at: string
