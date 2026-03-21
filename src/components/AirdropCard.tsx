@@ -1,4 +1,4 @@
-import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe, Trash2 } from "lucide-react";
+import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe } from "lucide-react";
 
 export interface AirdropProject {
   id: string;
@@ -46,6 +46,90 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   upcoming: { label: "Sắp ra mắt", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
 };
 
+const getWebsiteOrigin = (websiteUrl: string | null) => {
+  if (!websiteUrl) return null;
+  try {
+    return new URL(websiteUrl).origin;
+  } catch {
+    return null;
+  }
+};
+
+const getWebsiteHostname = (websiteUrl: string | null) => {
+  if (!websiteUrl) return null;
+  try {
+    return new URL(websiteUrl).hostname;
+  } catch {
+    return null;
+  }
+};
+
+const createFallbackLogo = (name: string) => {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("") || "A";
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+      <rect width="128" height="128" rx="28" fill="hsl(267 84% 56%)" />
+      <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="white">${initials}</text>
+    </svg>
+  `;
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
+const getProjectLogoCandidates = (project: AirdropProject) => {
+  const origin = getWebsiteOrigin(project.website_url);
+  const hostname = getWebsiteHostname(project.website_url);
+
+  return Array.from(
+    new Set(
+      [
+        project.logo_url,
+        origin ? `${origin}/apple-touch-icon.png` : null,
+        origin ? `${origin}/favicon.ico` : null,
+        hostname ? `https://icons.duckduckgo.com/ip3/${hostname}.ico` : null,
+        createFallbackLogo(project.name),
+      ].filter((value): value is string => Boolean(value))
+    )
+  );
+};
+
+const handleLogoError = (project: AirdropProject) => (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const img = e.currentTarget;
+  const candidates = getProjectLogoCandidates(project);
+  const currentIndex = Number(img.dataset.fallbackIndex ?? "0");
+  const nextIndex = currentIndex + 1;
+
+  if (nextIndex < candidates.length) {
+    img.dataset.fallbackIndex = String(nextIndex);
+    img.src = candidates[nextIndex];
+  }
+};
+
+interface ProjectLogoProps {
+  project: AirdropProject;
+  className: string;
+}
+
+function ProjectLogo({ project, className }: ProjectLogoProps) {
+  const candidates = getProjectLogoCandidates(project);
+
+  return (
+    <img
+      src={candidates[0]}
+      alt={project.name}
+      className={className}
+      data-fallback-index="0"
+      onError={handleLogoError(project)}
+    />
+  );
+}
+
 interface AirdropCardProps {
   project: AirdropProject;
   isSelected: boolean;
@@ -64,11 +148,9 @@ export function AirdropCard({ project, isSelected, onClick }: AirdropCardProps) 
       }`}
     >
       <div className="flex items-center gap-3 mb-2">
-        <img
-          src={project.logo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=64&bold=true`}
-          alt={project.name}
+        <ProjectLogo
+          project={project}
           className="w-8 h-8 rounded-full ring-1 ring-border object-cover bg-muted/50"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=64&bold=true`; }}
         />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground truncate">{project.name}</p>
@@ -117,13 +199,10 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      {/* Header */}
       <div className="flex items-start gap-5 mb-8">
-        <img
-          src={project.logo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=128&bold=true`}
-          alt={project.name}
+        <ProjectLogo
+          project={project}
           className="w-16 h-16 rounded-xl ring-2 ring-border animate-float object-cover bg-muted/50"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=128&bold=true`; }}
         />
         <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold neon-text truncate">{project.name}</h2>
@@ -149,12 +228,10 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
         </div>
       </div>
 
-      {/* Description */}
       {project.description && (
         <p className="text-foreground/80 text-base leading-relaxed mb-8">{project.description}</p>
       )}
 
-      {/* Stats grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div className="glow-card rounded-xl p-4 text-center">
           <DollarSign className="w-5 h-5 mx-auto mb-2 text-primary" />
@@ -184,7 +261,6 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
         </div>
       </div>
 
-      {/* Funding */}
       {project.funding && (
         <div className="glow-card rounded-xl p-5 mb-6">
           <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -194,7 +270,6 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
         </div>
       )}
 
-      {/* Guide */}
       {project.guide && (
         <div className="glow-card rounded-xl p-5 mb-6">
           <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -206,7 +281,6 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
         </div>
       )}
 
-      {/* Social links */}
       <div className="flex flex-wrap gap-3 mb-6">
         {project.twitter_url && (
           <a href={project.twitter_url} target="_blank" rel="noopener noreferrer"

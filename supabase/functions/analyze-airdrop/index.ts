@@ -5,6 +5,105 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const imageHeaders = {
+  "User-Agent": "Mozilla/5.0 (compatible; LovableBot/1.0)",
+};
+
+const getDomainFromUrl = (url?: string | null) => {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
+};
+
+const getOriginFromUrl = (url?: string | null) => {
+  if (!url) return null;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+};
+
+const makeAbsoluteUrl = (value: string, base: string) => {
+  try {
+    return new URL(value, base).toString();
+  } catch {
+    return null;
+  }
+};
+
+const looksLikeImageResponse = (contentType: string | null, url: string) => {
+  const normalized = (contentType || "").toLowerCase();
+  return normalized.includes("image") || normalized.includes("icon") || url.endsWith(".ico") || url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".svg") || url.endsWith(".webp");
+};
+
+const isReachableImage = async (url?: string | null) => {
+  if (!url || !url.startsWith("http")) return false;
+
+  try {
+    const response = await fetch(url, {
+      method: "HEAD",
+      redirect: "follow",
+      headers: imageHeaders,
+    });
+
+    if (!response.ok) return false;
+    return looksLikeImageResponse(response.headers.get("content-type"), url);
+  } catch {
+    return false;
+  }
+};
+
+const discoverLogoFromWebsite = async (websiteUrl?: string | null) => {
+  if (!websiteUrl) return null;
+
+  try {
+    const response = await fetch(websiteUrl, {
+      redirect: "follow",
+      headers: imageHeaders,
+    });
+
+    if (!response.ok) return null;
+
+    const html = await response.text();
+    const origin = getOriginFromUrl(response.url || websiteUrl);
+    const candidates = new Set<string>();
+
+    const patterns = [
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+      /<link[^>]+rel=["'][^"']*apple-touch-icon[^"']*["'][^>]+href=["']([^"']+)["']/i,
+      /<link[^>]+rel=["'][^"']*icon[^"']*["'][^>]+href=["']([^"']+)["']/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (match?.[1]) {
+        const absolute = makeAbsoluteUrl(match[1], response.url || websiteUrl);
+        if (absolute) candidates.add(absolute);
+      }
+    }
+
+    if (origin) {
+      candidates.add(`${origin}/apple-touch-icon.png`);
+      candidates.add(`${origin}/favicon.ico`);
+    }
+
+    for (const candidate of candidates) {
+      if (await isReachableImage(candidate)) {
+        return candidate;
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -30,7 +129,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `Bạn là chuyên gia phân tích dự án crypto/airdrop. Khi được hỏi về một dự án, hãy trả về thông tin chi tiết nhất có thể bằng tiếng Việt. Bạn PHẢI trả lời theo đúng format được yêu cầu.`
+            content: `Bạn là chuyên gia phân tích dự án crypto/airdrop. Khi được hỏi về một dự án, hãy trả về thông tin chi tiết nhất có thể bằng tiếng Việt. Bạn PHẢI trả lời theo đúng format được yêu cầu. Nếu không chắc logo chính thức thì để trống logo_url thay vì trả về link ảnh mạng xã hội không ổn định.`
           },
           {
             role: "user",
@@ -102,46 +201,32 @@ Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
 
     const projectInfo = JSON.parse(toolCall.function.arguments);
 
-    // Try to find a working logo URL
-    let domain = "";
-    if (projectInfo.website_url) {
-      try { domain = new URL(projectInfo.website_url).hostname; } catch { /* ignore */ }
-    }
-    if (!domain && projectInfo.name) {
-      domain = projectInfo.name.toLowerCase().replace(/[^a-z0-9]/g, '') + ".io";
+    const currentLogoValid = await isReachableImage(projectInfo.logo_url);
+    if (!currentLogoValid) {
+      projectInfo.logo_url = null;
     }
 
-    // Try multiple logo sources to find one that works
-    if (domain) {
-      const logoSources = [
-        `https://img.logo.dev/${domain}?token=pk_anonymous&size=128`,
-        `https://logo.clearbit.com/${domain}`,
-        `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-        `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-      ];
+    if (!projectInfo.logo_url && projectInfo.website_url) {
+      projectInfo.logo_url = await discoverLogoFromWebsite(projectInfo.website_url);
+    }
 
-      // Check if AI already provided a valid logo_url
-      if (projectInfo.logo_url && projectInfo.logo_url.startsWith("http")) {
-        // Keep AI's logo, add fallbacks
-      } else {
-        // Try each source, use the first one that responds
-        for (const url of logoSources) {
-          try {
-            const check = await fetch(url, { method: "HEAD", redirect: "follow" });
-            const ct = check.headers.get("content-type") || "";
-            if (check.ok && (ct.includes("image") || ct.includes("icon"))) {
-              projectInfo.logo_url = url;
-              break;
-            }
-          } catch { /* try next */ }
-        }
-        // Ultimate fallback
-        if (!projectInfo.logo_url) {
-          projectInfo.logo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(projectInfo.name)}&background=6d28d9&color=fff&size=128&bold=true`;
+    const domain = getDomainFromUrl(projectInfo.website_url) || (projectInfo.name ? `${projectInfo.name.toLowerCase().replace(/[^a-z0-9]/g, "")}.io` : null);
+    const fallbackSources = domain
+      ? [
+          `https://img.logo.dev/${domain}?token=pk_anonymous&size=128`,
+          `https://logo.clearbit.com/${domain}`,
+          `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+          `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+        ]
+      : [];
+
+    if (!projectInfo.logo_url) {
+      for (const candidate of fallbackSources) {
+        if (await isReachableImage(candidate)) {
+          projectInfo.logo_url = candidate;
+          break;
         }
       }
-    } else if (!projectInfo.logo_url) {
-      projectInfo.logo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(projectInfo.name)}&background=6d28d9&color=fff&size=128&bold=true`;
     }
 
     return new Response(JSON.stringify(projectInfo), {
