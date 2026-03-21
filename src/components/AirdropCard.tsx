@@ -65,10 +65,10 @@ export function AirdropCard({ project, isSelected, onClick }: AirdropCardProps) 
     >
       <div className="flex items-center gap-3 mb-2">
         <img
-          src={project.logo_url || `https://www.google.com/s2/favicons?domain=${project.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.io&sz=128`}
+          src={project.logo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=64&bold=true`}
           alt={project.name}
           className="w-8 h-8 rounded-full ring-1 ring-border object-cover bg-muted/50"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name)}&background=6d28d9&color=fff&size=64&bold=true`; }}
         />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground truncate">{project.name}</p>
