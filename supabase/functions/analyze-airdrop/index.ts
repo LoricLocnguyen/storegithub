@@ -102,17 +102,46 @@ Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
 
     const projectInfo = JSON.parse(toolCall.function.arguments);
 
-    // Auto-generate logo from website URL if not provided
-    if (!projectInfo.logo_url && projectInfo.website_url) {
-      try {
-        const domain = new URL(projectInfo.website_url).hostname;
-        projectInfo.logo_url = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-      } catch { /* ignore */ }
+    // Try to find a working logo URL
+    let domain = "";
+    if (projectInfo.website_url) {
+      try { domain = new URL(projectInfo.website_url).hostname; } catch { /* ignore */ }
     }
-    // Fallback: try to guess domain from project name
-    if (!projectInfo.logo_url && projectInfo.name) {
-      const slug = projectInfo.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      projectInfo.logo_url = `https://www.google.com/s2/favicons?domain=${slug}.io&sz=128`;
+    if (!domain && projectInfo.name) {
+      domain = projectInfo.name.toLowerCase().replace(/[^a-z0-9]/g, '') + ".io";
+    }
+
+    // Try multiple logo sources to find one that works
+    if (domain) {
+      const logoSources = [
+        `https://img.logo.dev/${domain}?token=pk_anonymous&size=128`,
+        `https://logo.clearbit.com/${domain}`,
+        `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+        `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+      ];
+
+      // Check if AI already provided a valid logo_url
+      if (projectInfo.logo_url && projectInfo.logo_url.startsWith("http")) {
+        // Keep AI's logo, add fallbacks
+      } else {
+        // Try each source, use the first one that responds
+        for (const url of logoSources) {
+          try {
+            const check = await fetch(url, { method: "HEAD", redirect: "follow" });
+            const ct = check.headers.get("content-type") || "";
+            if (check.ok && (ct.includes("image") || ct.includes("icon"))) {
+              projectInfo.logo_url = url;
+              break;
+            }
+          } catch { /* try next */ }
+        }
+        // Ultimate fallback
+        if (!projectInfo.logo_url) {
+          projectInfo.logo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(projectInfo.name)}&background=6d28d9&color=fff&size=128&bold=true`;
+        }
+      }
+    } else if (!projectInfo.logo_url) {
+      projectInfo.logo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(projectInfo.name)}&background=6d28d9&color=fff&size=128&bold=true`;
     }
 
     return new Response(JSON.stringify(projectInfo), {
