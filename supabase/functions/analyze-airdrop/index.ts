@@ -102,6 +102,19 @@ Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
 
     const projectInfo = JSON.parse(toolCall.function.arguments);
 
+    // Auto-generate logo from website URL if not provided
+    if (!projectInfo.logo_url && projectInfo.website_url) {
+      try {
+        const domain = new URL(projectInfo.website_url).hostname;
+        projectInfo.logo_url = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      } catch { /* ignore */ }
+    }
+    // Fallback: try to guess domain from project name
+    if (!projectInfo.logo_url && projectInfo.name) {
+      const slug = projectInfo.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      projectInfo.logo_url = `https://www.google.com/s2/favicons?domain=${slug}.io&sz=128`;
+    }
+
     return new Response(JSON.stringify(projectInfo), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
