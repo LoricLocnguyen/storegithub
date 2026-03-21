@@ -119,13 +119,12 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
       {/* Header */}
       <div className="flex items-start gap-5 mb-8">
-        {project.logo_url ? (
-          <img src={project.logo_url} alt={project.name} className="w-16 h-16 rounded-xl ring-2 ring-border animate-float object-cover" />
-        ) : (
-          <div className="w-16 h-16 rounded-xl ring-2 ring-border bg-primary/20 flex items-center justify-center animate-float">
-            <Zap className="w-8 h-8 text-primary" />
-          </div>
-        )}
+        <img
+          src={project.logo_url || `https://www.google.com/s2/favicons?domain=${project.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.io&sz=128`}
+          alt={project.name}
+          className="w-16 h-16 rounded-xl ring-2 ring-border animate-float object-cover bg-muted/50"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = ''; (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+        />
         <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold neon-text truncate">{project.name}</h2>
           <div className="flex items-center gap-2 mt-2">
