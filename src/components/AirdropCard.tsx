@@ -64,13 +64,12 @@ export function AirdropCard({ project, isSelected, onClick }: AirdropCardProps) 
       }`}
     >
       <div className="flex items-center gap-3 mb-2">
-        {project.logo_url ? (
-          <img src={project.logo_url} alt={project.name} className="w-8 h-8 rounded-full ring-1 ring-border object-cover" />
-        ) : (
-          <div className="w-8 h-8 rounded-full ring-1 ring-border bg-primary/20 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-primary" />
-          </div>
-        )}
+        <img
+          src={project.logo_url || `https://www.google.com/s2/favicons?domain=${project.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.io&sz=128`}
+          alt={project.name}
+          className="w-8 h-8 rounded-full ring-1 ring-border object-cover bg-muted/50"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+        />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground truncate">{project.name}</p>
           {project.blockchain && (
