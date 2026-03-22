@@ -125,17 +125,29 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           {
             role: "system",
-            content: `Bạn là chuyên gia phân tích dự án crypto/airdrop. Khi được hỏi về một dự án, hãy trả về thông tin chi tiết nhất có thể bằng tiếng Việt. Bạn PHẢI trả lời theo đúng format được yêu cầu. Nếu không chắc logo chính thức thì để trống logo_url thay vì trả về link ảnh mạng xã hội không ổn định.`
+            content: `Bạn là chuyên gia phân tích dự án crypto/airdrop với kiến thức sâu rộng về hệ sinh thái Web3. Khi được hỏi về một dự án, hãy trả về thông tin chi tiết nhất có thể bằng tiếng Việt.
+
+QUY TẮC QUAN TRỌNG VỀ TWITTER VÀ DISCORD:
+- Twitter/X: Phải là tài khoản CHÍNH THỨC của dự án, KHÔNG phải tài khoản cá nhân của founder hay team member. Format: https://x.com/TenDuAn hoặc https://twitter.com/TenDuAn
+- Discord: Phải là server Discord CHÍNH THỨC của dự án, KHÔNG phải server chung hay server khác. Format: https://discord.gg/invite-code
+- Nếu KHÔNG CHẮC CHẮN 100% đó là link chính thức → để trống (rỗng), KHÔNG được đoán hay bịa link
+- KHÔNG trả về link Twitter/Discord của blockchain (ví dụ: đừng trả về Twitter của Ethereum khi hỏi về một dự án trên Ethereum)
+
+QUY TẮC VỀ LOGO:
+- Nếu không chắc logo chính thức thì để trống logo_url
+
+QUY TẮC VỀ WEBSITE:
+- Phải là domain chính thức của dự án, KHÔNG phải trang docs hay blog`
           },
           {
             role: "user",
             content: `Phân tích dự án airdrop/crypto: "${projectName}"
 
-Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
+Lưu ý: Tìm chính xác tài khoản Twitter/X và Discord CHÍNH THỨC của dự án "${projectName}". Nếu không chắc chắn thì để trống.
 `
           }
         ],
@@ -144,14 +156,14 @@ Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
             type: "function",
             function: {
               name: "return_airdrop_info",
-              description: "Return structured airdrop project information",
+              description: "Return structured airdrop project information with verified official links only",
               parameters: {
                 type: "object",
                 properties: {
                   name: { type: "string", description: "Tên chính thức của dự án" },
                   description: { type: "string", description: "Mô tả chi tiết về dự án (2-4 câu)" },
-                  website_url: { type: "string", description: "URL website chính thức, hoặc rỗng nếu không biết" },
-                  logo_url: { type: "string", description: "URL logo chính thức, hoặc rỗng nếu không biết" },
+                  website_url: { type: "string", description: "URL website chính thức của dự án (không phải docs hay blog). Rỗng nếu không chắc chắn" },
+                  logo_url: { type: "string", description: "URL logo chính thức, rỗng nếu không chắc chắn" },
                   status: { type: "string", enum: ["running", "upcoming", "ended"], description: "Trạng thái hiện tại" },
                   blockchain: { type: "string", description: "Blockchain chính (Ethereum, Solana, Arbitrum, Base, etc.)" },
                   start_date: { type: "string", description: "Ngày bắt đầu (YYYY-MM-DD) hoặc rỗng" },
@@ -160,8 +172,8 @@ Trả về thông tin theo ĐÚNG format sau (giữ nguyên tên field):
                   estimated_value: { type: "string", description: "Ước tính giá trị airdrop (ví dụ: $100-$500)" },
                   difficulty: { type: "string", enum: ["easy", "medium", "hard"], description: "Mức độ khó để tham gia" },
                   funding: { type: "string", description: "Thông tin về vòng gọi vốn (ví dụ: $10M Series A từ a16z)" },
-                  twitter_url: { type: "string", description: "URL Twitter/X chính thức" },
-                  discord_url: { type: "string", description: "URL Discord chính thức" },
+                  twitter_url: { type: "string", description: "URL Twitter/X CHÍNH THỨC của dự án (ví dụ: https://x.com/layerzero_labs). PHẢI là tài khoản của dự án, KHÔNG phải founder hay blockchain. Rỗng nếu không chắc chắn 100%" },
+                  discord_url: { type: "string", description: "URL Discord CHÍNH THỨC của dự án (ví dụ: https://discord.gg/layerzero). PHẢI là server của dự án. Rỗng nếu không chắc chắn 100%" },
                 },
                 required: ["name", "description", "status", "blockchain", "guide", "difficulty"],
                 additionalProperties: false,
