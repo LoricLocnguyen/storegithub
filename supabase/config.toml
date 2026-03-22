@@ -2,3 +2,6 @@ project_id = "morowpjzdbnjzgxrauhn"
 
 [functions.analyze-airdrop]
 verify_jwt = false
+
+[functions.analyze-ai-tool]
+verify_jwt = false
