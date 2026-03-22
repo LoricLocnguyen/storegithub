@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_tools: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          discord_url: string | null
+          features: string | null
+          github_url: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          popularity: string | null
+          pricing: string | null
+          status: string
+          twitter_url: string | null
+          use_cases: string | null
+          website_url: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discord_url?: string | null
+          features?: string | null
+          github_url?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          popularity?: string | null
+          pricing?: string | null
+          status?: string
+          twitter_url?: string | null
+          use_cases?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discord_url?: string | null
+          features?: string | null
+          github_url?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          popularity?: string | null
+          pricing?: string | null
+          status?: string
+          twitter_url?: string | null
+          use_cases?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       airdrop_projects: {
         Row: {
           blockchain: string | null
