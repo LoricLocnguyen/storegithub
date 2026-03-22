@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import RepoAnalysis from "./pages/RepoAnalysis.tsx";
 import Airdrop from "./pages/Airdrop.tsx";
+import Explore from "./pages/Explore.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
