@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Archive, Trash2, Search, Zap, Compass } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap, Compass, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,19 @@ import { fetchRepoInfo, type RepoInfo } from "@/lib/github";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+const DISCOVER_CATEGORIES = [
+  { key: "learning", label: "Học tập", icon: BookOpen },
+  { key: "ai", label: "AI & ML", icon: Bot },
+  { key: "programming", label: "Lập trình", icon: Code },
+  { key: "trending", label: "Trending", icon: TrendingUp },
+] as const;
+
 const Index = () => {
   const [repos, setRepos] = useState<RepoInfo[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [discovering, setDiscovering] = useState(false);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
