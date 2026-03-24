@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2 } from "lucide-react";
+import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AIToolCard, AIToolDetail, type AITool } from "@/components/AIToolCard";
