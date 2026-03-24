@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.discover-ai-tools]
 verify_jwt = false
+
+[functions.discover-repos]
+verify_jwt = false

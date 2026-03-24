@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Archive, Trash2, Search, Zap, Compass } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap, Compass, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,19 @@ import { fetchRepoInfo, type RepoInfo } from "@/lib/github";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+const DISCOVER_CATEGORIES = [
+  { key: "learning", label: "Học tập", icon: BookOpen },
+  { key: "ai", label: "AI & ML", icon: Bot },
+  { key: "programming", label: "Lập trình", icon: Code },
+  { key: "trending", label: "Trending", icon: TrendingUp },
+] as const;
+
 const Index = () => {
   const [repos, setRepos] = useState<RepoInfo[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [discovering, setDiscovering] = useState(false);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -98,6 +106,83 @@ const Index = () => {
     }
   }, [url, repos, toast]);
 
+  const discoverRepos = useCallback(async (category: string) => {
+    setDiscovering(true);
+    const catLabel = DISCOVER_CATEGORIES.find(c => c.key === category)?.label || category;
+    toast({ title: `🔍 Đang tìm repo ${catLabel}...`, description: "AI đang tìm kiếm repo phổ biến" });
+
+    try {
+      const existingRepos = repos.map(r => r.full_name);
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/discover-repos`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ existingRepos, category }),
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Lỗi" }));
+        toast({ title: err.error || "Lỗi khi tìm kiếm!", variant: "destructive" });
+        return;
+      }
+
+      const { repos: discovered } = await resp.json();
+      if (!discovered || discovered.length === 0) {
+        toast({ title: "Không tìm thấy repo mới!" });
+        return;
+      }
+
+      // Filter out already existing
+      const newRepos = discovered.filter((r: any) => !repos.find(e => e.id === r.id));
+
+      // Save to DB
+      const inserts = newRepos.map((r: any) => ({
+        github_id: r.id,
+        name: r.name,
+        full_name: r.full_name,
+        description: r.description,
+        html_url: r.html_url,
+        stargazers_count: r.stargazers_count,
+        forks_count: r.forks_count,
+        language: r.language,
+        owner_login: r.owner.login,
+        owner_avatar_url: r.owner.avatar_url,
+        topics: r.topics || [],
+        updated_at: r.updated_at,
+        open_issues_count: r.open_issues_count,
+      }));
+
+      if (inserts.length > 0) {
+        const { error } = await supabase.from("saved_repos").insert(inserts);
+        if (error) {
+          console.error("Error saving repos:", error);
+          toast({ title: "Lỗi khi lưu!", variant: "destructive" });
+          return;
+        }
+      }
+
+      setRepos(prev => [...newRepos.map((r: any) => ({
+        id: r.id, name: r.name, full_name: r.full_name,
+        description: r.description, html_url: r.html_url,
+        stargazers_count: r.stargazers_count, forks_count: r.forks_count,
+        language: r.language, owner: r.owner,
+        topics: r.topics || [], updated_at: r.updated_at,
+        open_issues_count: r.open_issues_count,
+      })), ...prev]);
+
+      toast({ title: `✅ Đã thêm ${newRepos.length} repo ${catLabel}!` });
+    } catch {
+      toast({ title: "Không thể tìm kiếm!", variant: "destructive" });
+    } finally {
+      setDiscovering(false);
+    }
+  }, [repos, toast]);
+
   const removeRepo = async (id: number) => {
     const { error } = await supabase
       .from("saved_repos")
@@ -149,22 +234,42 @@ const Index = () => {
       </header>
 
       {/* Add repo bar */}
-      <div className="px-6 py-4 flex gap-3">
-        <Input
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addRepo()}
-          placeholder="Dán link GitHub repo vào đây..."
-          className="flex-1 bg-muted/50 border-border focus-visible:ring-primary/50 font-mono text-sm"
-        />
-        <Button
-          onClick={addRepo}
-          disabled={loading || !url.trim()}
-          className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          {loading ? "Đang tải..." : "Thêm"}
-        </Button>
+      <div className="px-6 py-4 flex flex-col gap-3">
+        <div className="flex gap-3">
+          <Input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addRepo()}
+            placeholder="Dán link GitHub repo vào đây..."
+            className="flex-1 bg-muted/50 border-border focus-visible:ring-primary/50 font-mono text-sm"
+          />
+          <Button
+            onClick={addRepo}
+            disabled={loading || !url.trim()}
+            className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {loading ? "Đang tải..." : "Thêm"}
+          </Button>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+            <Wand2 className="w-3.5 h-3.5" /> Khám phá:
+          </span>
+          {DISCOVER_CATEGORIES.map(cat => (
+            <Button
+              key={cat.key}
+              onClick={() => discoverRepos(cat.key)}
+              disabled={discovering}
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10 text-xs"
+            >
+              {discovering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <cat.icon className="w-3.5 h-3.5" />}
+              {cat.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Main content */}
