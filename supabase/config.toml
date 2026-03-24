@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.analyze-ai-tool]
 verify_jwt = false
+
+[functions.discover-ai-tools]
+verify_jwt = false
