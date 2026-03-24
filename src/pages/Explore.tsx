@@ -92,6 +92,69 @@ const Explore = () => {
     }
   }, [toolName, toast]);
 
+  const autoDiscover = useCallback(async () => {
+    setDiscovering(true);
+    toast({ title: "🔍 AI đang tìm kiếm...", description: "Tự động liệt kê các AI tool & phần mềm phổ biến" });
+
+    try {
+      const existingNames = tools.map((t) => t.name);
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/discover-ai-tools`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ existingNames }),
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Lỗi" }));
+        toast({ title: err.error || "Lỗi khi tìm kiếm!", variant: "destructive" });
+        return;
+      }
+
+      const { tools: discovered } = await resp.json();
+      if (!discovered || discovered.length === 0) {
+        toast({ title: "Không tìm thấy tool mới!", description: "Thử lại sau" });
+        return;
+      }
+
+      // Insert all discovered tools into DB
+      const inserts = discovered.map((t: any) => ({
+        name: t.name,
+        description: t.description || null,
+        website_url: t.website_url || null,
+        logo_url: null,
+        category: t.category || null,
+        pricing: t.pricing || null,
+        status: "active",
+        popularity: t.popularity || "emerging",
+        features: t.features || null,
+        use_cases: t.use_cases || null,
+      }));
+
+      const { data, error } = await supabase
+        .from("ai_tools")
+        .insert(inserts)
+        .select();
+
+      if (error) {
+        toast({ title: "Lỗi khi lưu!", variant: "destructive" });
+        return;
+      }
+
+      setTools((prev) => [...(data as AITool[]), ...prev]);
+      toast({ title: `✅ Đã thêm ${data.length} AI tool!`, description: "AI đã tự động tìm và liệt kê" });
+    } catch {
+      toast({ title: "Không thể tìm kiếm!", variant: "destructive" });
+    } finally {
+      setDiscovering(false);
+    }
+  }, [tools, toast]);
+
   const removeTool = async (id: string) => {
     const { error } = await supabase.from("ai_tools").delete().eq("id", id);
     if (error) { toast({ title: "Lỗi khi xóa!", variant: "destructive" }); return; }
