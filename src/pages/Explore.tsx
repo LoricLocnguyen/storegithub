@@ -13,6 +13,7 @@ const Explore = () => {
   const [search, setSearch] = useState("");
   const [toolName, setToolName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [discovering, setDiscovering] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
