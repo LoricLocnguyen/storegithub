@@ -192,7 +192,10 @@ const Explore = () => {
           disabled={loading}
         />
         <Button onClick={addTool} disabled={loading || !toolName.trim()} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />AI đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
+        </Button>
+        <Button onClick={autoDiscover} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
+          {discovering ? <><Loader2 className="w-4 h-4 animate-spin" />Đang tìm...</> : <><Wand2 className="w-4 h-4" />Tự động khám phá</>}
         </Button>
       </div>
 
