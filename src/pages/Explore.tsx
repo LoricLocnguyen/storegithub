@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2 } from "lucide-react";
+import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AIToolCard, AIToolDetail, type AITool } from "@/components/AIToolCard";
@@ -13,6 +13,7 @@ const Explore = () => {
   const [search, setSearch] = useState("");
   const [toolName, setToolName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [discovering, setDiscovering] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -91,6 +92,69 @@ const Explore = () => {
     }
   }, [toolName, toast]);
 
+  const autoDiscover = useCallback(async () => {
+    setDiscovering(true);
+    toast({ title: "🔍 AI đang tìm kiếm...", description: "Tự động liệt kê các AI tool & phần mềm phổ biến" });
+
+    try {
+      const existingNames = tools.map((t) => t.name);
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/discover-ai-tools`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ existingNames }),
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Lỗi" }));
+        toast({ title: err.error || "Lỗi khi tìm kiếm!", variant: "destructive" });
+        return;
+      }
+
+      const { tools: discovered } = await resp.json();
+      if (!discovered || discovered.length === 0) {
+        toast({ title: "Không tìm thấy tool mới!", description: "Thử lại sau" });
+        return;
+      }
+
+      // Insert all discovered tools into DB
+      const inserts = discovered.map((t: any) => ({
+        name: t.name,
+        description: t.description || null,
+        website_url: t.website_url || null,
+        logo_url: null,
+        category: t.category || null,
+        pricing: t.pricing || null,
+        status: "active",
+        popularity: t.popularity || "emerging",
+        features: t.features || null,
+        use_cases: t.use_cases || null,
+      }));
+
+      const { data, error } = await supabase
+        .from("ai_tools")
+        .insert(inserts)
+        .select();
+
+      if (error) {
+        toast({ title: "Lỗi khi lưu!", variant: "destructive" });
+        return;
+      }
+
+      setTools((prev) => [...(data as AITool[]), ...prev]);
+      toast({ title: `✅ Đã thêm ${data.length} AI tool!`, description: "AI đã tự động tìm và liệt kê" });
+    } catch {
+      toast({ title: "Không thể tìm kiếm!", variant: "destructive" });
+    } finally {
+      setDiscovering(false);
+    }
+  }, [tools, toast]);
+
   const removeTool = async (id: string) => {
     const { error } = await supabase.from("ai_tools").delete().eq("id", id);
     if (error) { toast({ title: "Lỗi khi xóa!", variant: "destructive" }); return; }
@@ -128,7 +192,10 @@ const Explore = () => {
           disabled={loading}
         />
         <Button onClick={addTool} disabled={loading || !toolName.trim()} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />AI đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
+        </Button>
+        <Button onClick={autoDiscover} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
+          {discovering ? <><Loader2 className="w-4 h-4 animate-spin" />Đang tìm...</> : <><Wand2 className="w-4 h-4" />Tự động khám phá</>}
         </Button>
       </div>
 
