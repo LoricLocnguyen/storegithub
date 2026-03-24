@@ -234,22 +234,42 @@ const Index = () => {
       </header>
 
       {/* Add repo bar */}
-      <div className="px-6 py-4 flex gap-3">
-        <Input
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addRepo()}
-          placeholder="Dán link GitHub repo vào đây..."
-          className="flex-1 bg-muted/50 border-border focus-visible:ring-primary/50 font-mono text-sm"
-        />
-        <Button
-          onClick={addRepo}
-          disabled={loading || !url.trim()}
-          className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          {loading ? "Đang tải..." : "Thêm"}
-        </Button>
+      <div className="px-6 py-4 flex flex-col gap-3">
+        <div className="flex gap-3">
+          <Input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addRepo()}
+            placeholder="Dán link GitHub repo vào đây..."
+            className="flex-1 bg-muted/50 border-border focus-visible:ring-primary/50 font-mono text-sm"
+          />
+          <Button
+            onClick={addRepo}
+            disabled={loading || !url.trim()}
+            className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {loading ? "Đang tải..." : "Thêm"}
+          </Button>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+            <Wand2 className="w-3.5 h-3.5" /> Khám phá:
+          </span>
+          {DISCOVER_CATEGORIES.map(cat => (
+            <Button
+              key={cat.key}
+              onClick={() => discoverRepos(cat.key)}
+              disabled={discovering}
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10 text-xs"
+            >
+              {discovering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <cat.icon className="w-3.5 h-3.5" />}
+              {cat.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Main content */}
