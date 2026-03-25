@@ -125,6 +125,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notes: {
+        Row: {
+          created_at: string
+          drawing_data: Json
+          id: string
+          linked_id: string | null
+          linked_type: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          drawing_data?: Json
+          id?: string
+          linked_id?: string | null
+          linked_type?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          drawing_data?: Json
+          id?: string
+          linked_id?: string | null
+          linked_type?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       saved_repos: {
         Row: {
           created_at: string
