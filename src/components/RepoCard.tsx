@@ -1,4 +1,4 @@
-import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles } from "lucide-react";
+import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles, PenTool } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
 
@@ -108,6 +108,13 @@ export function RepoDetail({ repo }: RepoDetailProps) {
           <p className="text-muted-foreground text-sm mt-1">by {repo.owner.login}</p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => navigate(`/notes?type=repo&id=${repo.id}`)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors text-sm font-medium"
+          >
+            <PenTool className="w-4 h-4" />
+            Ghi chú
+          </button>
           <button
             onClick={openAnalysis}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors text-sm font-medium"

@@ -1,4 +1,5 @@
-import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe } from "lucide-react";
+import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe, PenTool } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export interface AirdropProject {
   id: string;
@@ -193,6 +194,7 @@ interface AirdropDetailProps {
 }
 
 export function AirdropDetail({ project }: AirdropDetailProps) {
+  const navigate = useNavigate();
   const chainColor = project.blockchain ? chainColors[project.blockchain] || "hsl(var(--muted-foreground))" : undefined;
   const statusInfo = statusLabels[project.status] || statusLabels.running;
   const diffInfo = project.difficulty ? difficultyLabels[project.difficulty] : null;
@@ -219,6 +221,13 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
           </div>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => navigate(`/notes?type=airdrop&id=${project.id}`)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors text-sm font-medium"
+          >
+            <PenTool className="w-4 h-4" />
+            Ghi chú
+          </button>
           {project.website_url && (
             <a href={project.website_url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
