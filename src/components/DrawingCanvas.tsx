@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, type ReactNode } from "react";
 import { Pencil, Eraser, Undo2, Redo2, Trash2, Download, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -18,6 +18,7 @@ interface DrawingCanvasProps {
   initialData?: Stroke[];
   onChange?: (strokes: Stroke[]) => void;
   className?: string;
+  overlay?: ReactNode;
 }
 
 const COLORS = [
@@ -31,7 +32,7 @@ const COLORS = [
   "hsl(320, 80%, 60%)",
 ];
 
-const DrawingCanvas = ({ initialData = [], onChange, className = "" }: DrawingCanvasProps) => {
+const DrawingCanvas = ({ initialData = [], onChange, className = "", overlay }: DrawingCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState<"pen" | "eraser">("pen");
@@ -230,6 +231,7 @@ const DrawingCanvas = ({ initialData = [], onChange, className = "" }: DrawingCa
           onTouchMove={draw}
           onTouchEnd={endDraw}
         />
+        {overlay}
       </div>
     </div>
   );
