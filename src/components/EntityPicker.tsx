@@ -3,6 +3,8 @@ import { GitFork, Cpu, Coins, Search, Plus, Link2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CONNECTION_STYLES } from "@/components/NodeMapLayer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Entity {
   id: string;
@@ -15,6 +17,8 @@ interface EntityPickerProps {
   onAddNode: (entity: Entity) => void;
   connectMode: boolean;
   onToggleConnectMode: () => void;
+  selectedStyle: string;
+  onStyleChange: (style: string) => void;
 }
 
 const tabs = [
@@ -23,11 +27,12 @@ const tabs = [
   { key: "ai_tool" as const, label: "AI Tool", icon: Cpu },
 ];
 
-const EntityPicker = ({ onAddNode, connectMode, onToggleConnectMode }: EntityPickerProps) => {
+const EntityPicker = ({ onAddNode, connectMode, onToggleConnectMode, selectedStyle, onStyleChange }: EntityPickerProps) => {
   const [tab, setTab] = useState<"repo" | "airdrop" | "ai_tool">("repo");
   const [search, setSearch] = useState("");
   const [entities, setEntities] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showStyles, setShowStyles] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -49,19 +54,49 @@ const EntityPicker = ({ onAddNode, connectMode, onToggleConnectMode }: EntityPic
 
   const filtered = entities.filter((e) => e.name.toLowerCase().includes(search.toLowerCase()));
   const typeColors = { repo: "text-purple-400", airdrop: "text-amber-400", ai_tool: "text-cyan-400" };
+  const currentStyleObj = CONNECTION_STYLES.find((s) => s.key === selectedStyle) || CONNECTION_STYLES[0];
 
   return (
     <div className="w-56 border-l border-border/50 flex flex-col bg-background/50">
-      <div className="p-2 border-b border-border/50">
+      <div className="p-2 border-b border-border/50 space-y-2">
         <Button
           size="sm"
           variant={connectMode ? "default" : "outline"}
-          className="w-full gap-2 mb-2"
+          className="w-full gap-2"
           onClick={onToggleConnectMode}
         >
           <Link2 className="w-3.5 h-3.5" />
           {connectMode ? "Đang nối…" : "Nối liên kết"}
         </Button>
+
+        {/* Style selector toggle */}
+        <button
+          onClick={() => setShowStyles((p) => !p)}
+          className="w-full flex items-center justify-between px-2 py-1.5 rounded text-xs text-muted-foreground hover:bg-muted/40 transition-colors"
+        >
+          <span>Kiểu nối: <span className="text-foreground font-medium">{currentStyleObj.emoji} {currentStyleObj.label}</span></span>
+          <span className="text-[10px]">{showStyles ? "▲" : "▼"}</span>
+        </button>
+
+        {showStyles && (
+          <ScrollArea className="max-h-48">
+            <div className="grid grid-cols-2 gap-1 pr-2">
+              {CONNECTION_STYLES.map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => { onStyleChange(s.key); setShowStyles(false); }}
+                  className={`flex items-center gap-1 px-1.5 py-1 rounded text-[10px] transition-colors ${
+                    selectedStyle === s.key ? "bg-primary/20 text-primary" : "text-muted-foreground hover:bg-muted/30"
+                  }`}
+                >
+                  <span className="text-xs">{s.emoji}</span>
+                  <span className="truncate">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+
         <div className="flex gap-1">
           {tabs.map((t) => (
             <button
