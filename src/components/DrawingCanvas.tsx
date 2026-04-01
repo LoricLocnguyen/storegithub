@@ -18,6 +18,7 @@ interface DrawingCanvasProps {
   initialData?: Stroke[];
   onChange?: (strokes: Stroke[]) => void;
   className?: string;
+  overlay?: ReactNode;
 }
 
 const COLORS = [
