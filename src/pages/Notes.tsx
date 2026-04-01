@@ -1,27 +1,56 @@
 import { useState, useEffect } from "react";
 import { PenTool, Plus, Trash2, ArrowLeft, Save, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DrawingCanvas, { type Stroke } from "@/components/DrawingCanvas";
+import NodeMapLayer, { type CanvasNode, type NodeConnection } from "@/components/NodeMapLayer";
+import EntityPicker from "@/components/EntityPicker";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+interface NoteData {
+  strokes: Stroke[];
+  nodes: CanvasNode[];
+  connections: NodeConnection[];
+}
+
 interface Note {
   id: string;
   title: string;
-  drawing_data: Stroke[];
+  data: NoteData;
   linked_type: string | null;
   linked_id: string | null;
   created_at: string;
   updated_at: string;
 }
 
+const emptyData: NoteData = { strokes: [], nodes: [], connections: [] };
+
+const parseDrawingData = (raw: any): NoteData => {
+  if (!raw) return emptyData;
+  // New format: { strokes, nodes, connections }
+  if (raw && typeof raw === "object" && !Array.isArray(raw) && "strokes" in raw) {
+    return {
+      strokes: Array.isArray(raw.strokes) ? raw.strokes : [],
+      nodes: Array.isArray(raw.nodes) ? raw.nodes : [],
+      connections: Array.isArray(raw.connections) ? raw.connections : [],
+    };
+  }
+  // Legacy format: Stroke[]
+  if (Array.isArray(raw)) {
+    return { strokes: raw, nodes: [], connections: [] };
+  }
+  return emptyData;
+};
+
 const Notes = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [currentStrokes, setCurrentStrokes] = useState<Stroke[]>([]);
+  const [currentNodes, setCurrentNodes] = useState<CanvasNode[]>([]);
+  const [currentConnections, setCurrentConnections] = useState<NodeConnection[]>([]);
+  const [connectMode, setConnectMode] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -37,14 +66,21 @@ const Notes = () => {
       }
       const { data } = await query;
       if (data) {
-        const mapped = data.map((n: any) => ({
-          ...n,
-          drawing_data: Array.isArray(n.drawing_data) ? n.drawing_data : [],
+        const mapped: Note[] = data.map((n: any) => ({
+          id: n.id,
+          title: n.title,
+          data: parseDrawingData(n.drawing_data),
+          linked_type: n.linked_type,
+          linked_id: n.linked_id,
+          created_at: n.created_at,
+          updated_at: n.updated_at,
         }));
         setNotes(mapped);
         if (mapped.length > 0 && !selected) {
           setSelected(mapped[0].id);
-          setCurrentStrokes(mapped[0].drawing_data);
+          setCurrentStrokes(mapped[0].data.strokes);
+          setCurrentNodes(mapped[0].data.nodes);
+          setCurrentConnections(mapped[0].data.connections);
         }
       }
     };
@@ -56,7 +92,7 @@ const Notes = () => {
       .from("notes")
       .insert({
         title: "Note mới",
-        drawing_data: [],
+        drawing_data: emptyData as any,
         linked_type: linkedType,
         linked_id: linkedId,
       })
@@ -68,19 +104,22 @@ const Notes = () => {
       return;
     }
 
-    const newNote: Note = { ...data, drawing_data: [] };
-    setNotes(prev => [newNote, ...prev]);
+    const newNote: Note = { id: data.id, title: data.title, data: emptyData, linked_type: data.linked_type, linked_id: data.linked_id, created_at: data.created_at, updated_at: data.updated_at };
+    setNotes((prev) => [newNote, ...prev]);
     setSelected(newNote.id);
     setCurrentStrokes([]);
+    setCurrentNodes([]);
+    setCurrentConnections([]);
     toast({ title: "✏️ Đã tạo note mới!" });
   };
 
   const saveNote = async () => {
     if (!selected) return;
     setSaving(true);
+    const drawingData: NoteData = { strokes: currentStrokes, nodes: currentNodes, connections: currentConnections };
     const { error } = await supabase
       .from("notes")
-      .update({ drawing_data: currentStrokes as any, updated_at: new Date().toISOString() })
+      .update({ drawing_data: drawingData as any, updated_at: new Date().toISOString() })
       .eq("id", selected);
     setSaving(false);
 
@@ -88,30 +127,48 @@ const Notes = () => {
       toast({ title: "Lỗi lưu!", variant: "destructive" });
       return;
     }
-    setNotes(prev => prev.map(n => n.id === selected ? { ...n, drawing_data: currentStrokes, updated_at: new Date().toISOString() } : n));
+    setNotes((prev) => prev.map((n) => (n.id === selected ? { ...n, data: drawingData, updated_at: new Date().toISOString() } : n)));
     toast({ title: "💾 Đã lưu!" });
   };
 
   const deleteNote = async (id: string) => {
     await supabase.from("notes").delete().eq("id", id);
-    setNotes(prev => prev.filter(n => n.id !== id));
+    setNotes((prev) => prev.filter((n) => n.id !== id));
     if (selected === id) {
       setSelected(null);
       setCurrentStrokes([]);
+      setCurrentNodes([]);
+      setCurrentConnections([]);
     }
   };
 
   const renameNote = async (id: string, title: string) => {
     await supabase.from("notes").update({ title }).eq("id", id);
-    setNotes(prev => prev.map(n => n.id === id ? { ...n, title } : n));
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, title } : n)));
   };
 
   const selectNote = (note: Note) => {
     setSelected(note.id);
-    setCurrentStrokes(note.drawing_data);
+    setCurrentStrokes(note.data.strokes);
+    setCurrentNodes(note.data.nodes);
+    setCurrentConnections(note.data.connections);
+    setConnectMode(false);
   };
 
-  const selectedNote = notes.find(n => n.id === selected);
+  const addNodeFromEntity = (entity: { id: string; name: string; type: "repo" | "airdrop" | "ai_tool"; avatarUrl?: string }) => {
+    const newNode: CanvasNode = {
+      id: crypto.randomUUID(),
+      type: entity.type,
+      entityId: entity.id,
+      name: entity.name,
+      x: 200 + Math.random() * 300,
+      y: 150 + Math.random() * 200,
+      avatarUrl: entity.avatarUrl,
+    };
+    setCurrentNodes((prev) => [...prev, newNode]);
+  };
+
+  const selectedNote = notes.find((n) => n.id === selected);
 
   return (
     <div className="min-h-screen aurora-bg flex flex-col">
@@ -137,8 +194,8 @@ const Notes = () => {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-64 min-w-[220px] border-r border-border/50 flex flex-col">
+        {/* Sidebar - Note list */}
+        <aside className="w-56 min-w-[200px] border-r border-border/50 flex flex-col">
           <div className="p-3">
             <Button onClick={createNote} className="w-full gap-2" size="sm">
               <Plus className="w-4 h-4" /> Tạo Note
@@ -156,9 +213,7 @@ const Notes = () => {
                 key={note.id}
                 onClick={() => selectNote(note)}
                 className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
-                  selected === note.id
-                    ? "bg-primary/20 border border-primary/40"
-                    : "bg-muted/20 border border-transparent hover:bg-muted/40"
+                  selected === note.id ? "bg-primary/20 border border-primary/40" : "bg-muted/20 border border-transparent hover:bg-muted/40"
                 }`}
               >
                 <input
@@ -167,9 +222,12 @@ const Notes = () => {
                   onChange={(e) => renameNote(note.id, e.target.value)}
                   onClick={(e) => e.stopPropagation()}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {new Date(note.updated_at).toLocaleDateString("vi-VN")}
-                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <p className="text-xs text-muted-foreground">{new Date(note.updated_at).toLocaleDateString("vi-VN")}</p>
+                  {note.data.nodes.length > 0 && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{note.data.nodes.length} node</span>
+                  )}
+                </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}
                   className="absolute top-2 right-2 p-1 rounded bg-destructive/10 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
@@ -186,9 +244,18 @@ const Notes = () => {
           {selectedNote ? (
             <DrawingCanvas
               key={selected}
-              initialData={selectedNote.drawing_data}
+              initialData={currentStrokes}
               onChange={setCurrentStrokes}
               className="flex-1"
+              overlay={
+                <NodeMapLayer
+                  nodes={currentNodes}
+                  connections={currentConnections}
+                  onNodesChange={setCurrentNodes}
+                  onConnectionsChange={setCurrentConnections}
+                  connectMode={connectMode}
+                />
+              }
             />
           ) : (
             <div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -199,6 +266,15 @@ const Notes = () => {
             </div>
           )}
         </main>
+
+        {/* Entity Picker - right panel */}
+        {selectedNote && (
+          <EntityPicker
+            onAddNode={addNodeFromEntity}
+            connectMode={connectMode}
+            onToggleConnectMode={() => setConnectMode((p) => !p)}
+          />
+        )}
       </div>
     </div>
   );
