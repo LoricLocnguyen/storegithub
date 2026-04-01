@@ -231,6 +231,7 @@ const DrawingCanvas = ({ initialData = [], onChange, className = "", overlay }: 
           onTouchMove={draw}
           onTouchEnd={endDraw}
         />
+        {overlay}
       </div>
     </div>
   );
