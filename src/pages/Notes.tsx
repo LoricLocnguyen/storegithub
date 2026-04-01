@@ -275,6 +275,8 @@ const Notes = () => {
             onAddNode={addNodeFromEntity}
             connectMode={connectMode}
             onToggleConnectMode={() => setConnectMode((p) => !p)}
+            selectedStyle={selectedStyle}
+            onStyleChange={setSelectedStyle}
           />
         )}
       </div>
