@@ -32,7 +32,7 @@ const COLORS = [
   "hsl(320, 80%, 60%)",
 ];
 
-const DrawingCanvas = ({ initialData = [], onChange, className = "" }: DrawingCanvasProps) => {
+const DrawingCanvas = ({ initialData = [], onChange, className = "", overlay }: DrawingCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState<"pen" | "eraser">("pen");
