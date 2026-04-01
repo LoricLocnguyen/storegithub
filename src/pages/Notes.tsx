@@ -51,6 +51,7 @@ const Notes = () => {
   const [currentNodes, setCurrentNodes] = useState<CanvasNode[]>([]);
   const [currentConnections, setCurrentConnections] = useState<NodeConnection[]>([]);
   const [connectMode, setConnectMode] = useState(false);
+  const [selectedStyle, setSelectedStyle] = useState("solid");
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -254,6 +255,7 @@ const Notes = () => {
                   onNodesChange={setCurrentNodes}
                   onConnectionsChange={setCurrentConnections}
                   connectMode={connectMode}
+                  selectedStyle={selectedStyle}
                 />
               }
             />
@@ -273,6 +275,8 @@ const Notes = () => {
             onAddNode={addNodeFromEntity}
             connectMode={connectMode}
             onToggleConnectMode={() => setConnectMode((p) => !p)}
+            selectedStyle={selectedStyle}
+            onStyleChange={setSelectedStyle}
           />
         )}
       </div>
