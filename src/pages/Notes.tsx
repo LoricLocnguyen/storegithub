@@ -255,6 +255,7 @@ const Notes = () => {
                   onNodesChange={setCurrentNodes}
                   onConnectionsChange={setCurrentConnections}
                   connectMode={connectMode}
+                  selectedStyle={selectedStyle}
                 />
               }
             />
