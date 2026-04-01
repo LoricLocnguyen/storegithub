@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, type ReactNode } from "react";
 import { Pencil, Eraser, Undo2, Redo2, Trash2, Download, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
