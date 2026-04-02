@@ -201,7 +201,8 @@ const Notes = () => {
         </h1>
         <div className="flex-1" />
         {selected && (
-          <Button onClick={saveNote} disabled={saving} size="sm" className="gap-1.5">
+          <>
+            <Button onClick={saveNote} disabled={saving} size="sm" className="gap-1.5">
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
               Lưu
             </Button>
@@ -215,6 +216,7 @@ const Notes = () => {
               <Sparkles className="w-3.5 h-3.5" />
               Yêu cầu AI
             </Button>
+          </>
         )}
       </header>
 
