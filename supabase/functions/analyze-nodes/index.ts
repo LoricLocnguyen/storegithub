@@ -24,7 +24,7 @@ serve(async (req) => {
       `${i + 1}. "${n.name}" (Loại: ${n.type === "repo" ? "GitHub Repository" : n.type === "airdrop" ? "Dự án Airdrop/Crypto" : "Công cụ AI"})`
     ).join("\n");
 
-    const prompt = `Bạn là chuyên gia phân tích công nghệ. Hãy phân tích các node sau trên canvas và đưa ra gợi ý kết hợp:
+    const prompt = `Bạn là chuyên gia phân tích công nghệ và tư vấn startup. Hãy phân tích các node trên canvas và ĐỀ XUẤT Ý TƯỞNG DỰ ÁN cụ thể có thể xây dựng trong tương lai:
 
 Danh sách node:
 ${nodeDescriptions}
@@ -34,17 +34,27 @@ Hãy trả lời bằng tiếng Việt theo đúng format JSON sau (KHÔNG có m
   "nodeFeatures": [
     { "name": "tên node", "features": ["tính năng 1", "tính năng 2", "tính năng 3"], "category": "phân loại ngắn" }
   ],
-  "suggestions": [
-    { "from": "tên node 1", "to": "tên node 2", "reason": "lý do nên kết hợp", "potential": "mô tả ngắn công cụ có thể tạo ra khi kết hợp", "difficulty": "dễ|trung bình|khó" }
+  "projectIdeas": [
+    {
+      "title": "Tên dự án gợi ý",
+      "nodes": ["tên node 1", "tên node 2"],
+      "description": "Mô tả chi tiết dự án có thể tạo ra",
+      "howToBuild": "Hướng dẫn ngắn gọn cách bắt đầu xây dựng",
+      "targetUsers": "Đối tượng người dùng mục tiêu",
+      "potential": "Tiềm năng thị trường / giá trị mang lại",
+      "difficulty": "dễ|trung bình|khó",
+      "timeline": "thời gian ước tính (VD: 2-4 tuần)"
+    }
   ],
-  "summary": "tóm tắt tổng quan về tiềm năng kết hợp"
+  "summary": "tóm tắt tổng quan và lời khuyên chiến lược"
 }
 
 Quy tắc:
 - Phân tích tính năng thực tế dựa trên tên và loại của mỗi node
-- Gợi ý các cặp kết hợp có giá trị thực tiễn cao, giống như Claude + Ollama = công cụ AI local mạnh mẽ
-- Mỗi gợi ý phải giải thích rõ tạo ra sản phẩm/công cụ gì
-- Trả về 2-5 gợi ý kết hợp hay nhất`;
+- Đề xuất 2-5 ý tưởng dự án CỤ THỂ có thể xây dựng bằng cách kết hợp các node
+- Ví dụ: Claude + Ollama = AI assistant chạy local, LangChain + Supabase = RAG chatbot với database
+- Mỗi ý tưởng phải có tên dự án hấp dẫn, mô tả rõ ràng, và hướng dẫn bắt đầu
+- Ưu tiên các ý tưởng có giá trị thực tiễn cao và khả thi`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
