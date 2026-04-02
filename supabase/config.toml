@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.discover-repos]
 verify_jwt = false
+
+[functions.analyze-nodes]
+verify_jwt = false

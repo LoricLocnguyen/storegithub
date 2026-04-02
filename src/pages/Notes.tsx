@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { PenTool, Plus, Trash2, ArrowLeft, Save, Loader2 } from "lucide-react";
+import { PenTool, Plus, Trash2, ArrowLeft, Save, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DrawingCanvas, { type Stroke } from "@/components/DrawingCanvas";
 import NodeMapLayer, { type CanvasNode, type NodeConnection } from "@/components/NodeMapLayer";
 import EntityPicker from "@/components/EntityPicker";
+import NodeAIPanel from "@/components/NodeAIPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -52,6 +53,7 @@ const Notes = () => {
   const [currentConnections, setCurrentConnections] = useState<NodeConnection[]>([]);
   const [connectMode, setConnectMode] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("solid");
+  const [showAIPanel, setShowAIPanel] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -169,6 +171,18 @@ const Notes = () => {
     setCurrentNodes((prev) => [...prev, newNode]);
   };
 
+  const handleAIAddConnection = (fromName: string, toName: string) => {
+    const fromNode = currentNodes.find((n) => n.name === fromName);
+    const toNode = currentNodes.find((n) => n.name === toName);
+    if (!fromNode || !toNode) return;
+    const exists = currentConnections.some(
+      (c) => (c.fromId === fromNode.id && c.toId === toNode.id) || (c.fromId === toNode.id && c.toId === fromNode.id)
+    );
+    if (!exists) {
+      setCurrentConnections((prev) => [...prev, { id: crypto.randomUUID(), fromId: fromNode.id, toId: toNode.id, style: "glow-cyan" }]);
+    }
+  };
+
   const selectedNote = notes.find((n) => n.id === selected);
 
   return (
@@ -187,10 +201,22 @@ const Notes = () => {
         </h1>
         <div className="flex-1" />
         {selected && (
-          <Button onClick={saveNote} disabled={saving} size="sm" className="gap-1.5">
-            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-            Lưu
-          </Button>
+          <>
+            <Button onClick={saveNote} disabled={saving} size="sm" className="gap-1.5">
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              Lưu
+            </Button>
+            <Button
+              onClick={() => setShowAIPanel((p) => !p)}
+              size="sm"
+              variant={showAIPanel ? "default" : "outline"}
+              className="gap-1.5"
+              disabled={currentNodes.length < 2}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              Yêu cầu AI
+            </Button>
+          </>
         )}
       </header>
 
@@ -241,7 +267,7 @@ const Notes = () => {
         </aside>
 
         {/* Canvas */}
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden relative">
           {selectedNote ? (
             <DrawingCanvas
               key={selected}
@@ -266,6 +292,15 @@ const Notes = () => {
                 <p className="text-lg">Chọn hoặc tạo note mới để bắt đầu vẽ</p>
               </div>
             </div>
+          )}
+          {/* AI Panel */}
+          {showAIPanel && selectedNote && (
+            <NodeAIPanel
+              nodes={currentNodes}
+              connections={currentConnections}
+              onAddConnection={handleAIAddConnection}
+              onClose={() => setShowAIPanel(false)}
+            />
           )}
         </main>
 
