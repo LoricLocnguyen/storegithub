@@ -267,7 +267,7 @@ const Notes = () => {
         </aside>
 
         {/* Canvas */}
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden relative">
           {selectedNote ? (
             <DrawingCanvas
               key={selected}
@@ -292,6 +292,15 @@ const Notes = () => {
                 <p className="text-lg">Chọn hoặc tạo note mới để bắt đầu vẽ</p>
               </div>
             </div>
+          )}
+          {/* AI Panel */}
+          {showAIPanel && selectedNote && (
+            <NodeAIPanel
+              nodes={currentNodes}
+              connections={currentConnections}
+              onAddConnection={handleAIAddConnection}
+              onClose={() => setShowAIPanel(false)}
+            />
           )}
         </main>
 
