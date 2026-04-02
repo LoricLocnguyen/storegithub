@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Loader2, Zap, ArrowRight, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Loader2, Zap, Lightbulb, X, ChevronDown, ChevronUp, Clock, Users, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -12,17 +12,20 @@ interface NodeFeature {
   category: string;
 }
 
-interface Suggestion {
-  from: string;
-  to: string;
-  reason: string;
+interface ProjectIdea {
+  title: string;
+  nodes: string[];
+  description: string;
+  howToBuild: string;
+  targetUsers: string;
   potential: string;
   difficulty: string;
+  timeline: string;
 }
 
 interface AnalysisResult {
   nodeFeatures: NodeFeature[];
-  suggestions: Suggestion[];
+  projectIdeas: ProjectIdea[];
   summary: string;
 }
 
@@ -42,7 +45,8 @@ const difficultyColors: Record<string, string> = {
 const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPanelProps) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [showFeatures, setShowFeatures] = useState(true);
+  const [showFeatures, setShowFeatures] = useState(false);
+  const [expandedIdea, setExpandedIdea] = useState<number | null>(0);
   const { toast } = useToast();
 
   const analyze = async () => {
@@ -50,20 +54,17 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
       toast({ title: "Cần ít nhất 2 node trên canvas để phân tích", variant: "destructive" });
       return;
     }
-
     setLoading(true);
     setResult(null);
-
     try {
       const { data, error } = await supabase.functions.invoke("analyze-nodes", {
         body: { nodes: nodes.map((n) => ({ name: n.name, type: n.type })) },
       });
-
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      if (!data?.suggestions) throw new Error("Invalid response");
-
+      if (!data?.projectIdeas && !data?.suggestions) throw new Error("Invalid response");
       setResult(data as AnalysisResult);
+      setExpandedIdea(0);
       toast({ title: "🤖 AI đã phân tích xong!" });
     } catch (e: any) {
       toast({ title: e.message || "Lỗi phân tích", variant: "destructive" });
@@ -72,18 +73,21 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
     }
   };
 
-  const applySuggestion = (s: Suggestion) => {
-    onAddConnection(s.from, s.to);
-    toast({ title: `✅ Đã nối: ${s.from} ↔ ${s.to}` });
+  const applyIdea = (idea: ProjectIdea) => {
+    // Connect all nodes mentioned in the idea
+    for (let i = 0; i < idea.nodes.length - 1; i++) {
+      onAddConnection(idea.nodes[i], idea.nodes[i + 1]);
+    }
+    toast({ title: `✅ Đã nối các node cho: ${idea.title}` });
   };
 
   return (
-    <div className="absolute top-14 right-[230px] w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col overflow-hidden">
+    <div className="absolute top-2 right-2 w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="text-sm font-semibold">AI Gợi ý liên kết</span>
+          <Lightbulb className="w-4 h-4 text-amber-400" />
+          <span className="text-sm font-semibold">Ý tưởng dự án AI</span>
         </div>
         <button onClick={onClose} className="p-1 rounded hover:bg-muted/40 transition-colors">
           <X className="w-4 h-4 text-muted-foreground" />
@@ -95,12 +99,15 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
           {/* Analyze button */}
           {!result && (
             <div className="text-center space-y-3">
-              <p className="text-xs text-muted-foreground">
-                AI sẽ phân tích {nodes.length} node trên canvas, phát hiện tính năng của mỗi node và gợi ý các kết hợp tiềm năng.
+              <div className="w-12 h-12 mx-auto rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Rocket className="w-6 h-6 text-amber-400" />
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                AI sẽ phân tích <strong>{nodes.length} node</strong> trên canvas và đề xuất ý tưởng dự án cụ thể có thể xây dựng trong tương lai.
               </p>
               <Button onClick={analyze} disabled={loading || nodes.length < 2} className="gap-2 w-full">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {loading ? "Đang phân tích..." : "Phân tích & Gợi ý"}
+                {loading ? "Đang phân tích..." : "Gợi ý ý tưởng dự án"}
               </Button>
             </div>
           )}
@@ -109,11 +116,77 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
           {result && (
             <>
               {/* Summary */}
-              <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
                 <p className="text-xs text-foreground leading-relaxed">{result.summary}</p>
               </div>
 
-              {/* Node Features */}
+              {/* Project Ideas */}
+              {result.projectIdeas?.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Lightbulb className="w-3 h-3 text-amber-400" />
+                    Ý tưởng dự án ({result.projectIdeas.length})
+                  </p>
+                  <div className="space-y-2">
+                    {result.projectIdeas.map((idea, i) => {
+                      const isExpanded = expandedIdea === i;
+                      return (
+                        <div key={i} className="rounded-lg bg-muted/10 border border-border/30 overflow-hidden">
+                          <button
+                            onClick={() => setExpandedIdea(isExpanded ? null : i)}
+                            className="w-full p-3 text-left flex items-start gap-2"
+                          >
+                            <span className="text-sm mt-0.5">💡</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-foreground">{idea.title}</p>
+                              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                                {idea.nodes.map((n, j) => (
+                                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{n}</span>
+                                ))}
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded ml-auto ${difficultyColors[idea.difficulty] || "bg-muted/40 text-muted-foreground"}`}>
+                                  {idea.difficulty}
+                                </span>
+                              </div>
+                            </div>
+                            {isExpanded ? <ChevronUp className="w-3 h-3 text-muted-foreground mt-1" /> : <ChevronDown className="w-3 h-3 text-muted-foreground mt-1" />}
+                          </button>
+
+                          {isExpanded && (
+                            <div className="px-3 pb-3 space-y-2.5">
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">{idea.description}</p>
+
+                              <div className="p-2 rounded bg-primary/5 border border-primary/10 space-y-1.5">
+                                <div className="flex items-start gap-1.5">
+                                  <Zap className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
+                                  <p className="text-[11px] text-foreground"><strong>Cách bắt đầu:</strong> {idea.howToBuild}</p>
+                                </div>
+                                <div className="flex items-start gap-1.5">
+                                  <Users className="w-3 h-3 text-cyan-400 mt-0.5 shrink-0" />
+                                  <p className="text-[11px] text-foreground"><strong>Đối tượng:</strong> {idea.targetUsers}</p>
+                                </div>
+                                <div className="flex items-start gap-1.5">
+                                  <Rocket className="w-3 h-3 text-purple-400 mt-0.5 shrink-0" />
+                                  <p className="text-[11px] text-foreground"><strong>Tiềm năng:</strong> {idea.potential}</p>
+                                </div>
+                                <div className="flex items-start gap-1.5">
+                                  <Clock className="w-3 h-3 text-green-400 mt-0.5 shrink-0" />
+                                  <p className="text-[11px] text-foreground"><strong>Timeline:</strong> {idea.timeline}</p>
+                                </div>
+                              </div>
+
+                              <Button size="sm" variant="outline" className="w-full gap-1.5 h-7 text-xs" onClick={() => applyIdea(idea)}>
+                                <Zap className="w-3 h-3" /> Áp dụng liên kết cho dự án này
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Node Features (collapsed by default) */}
               {result.nodeFeatures?.length > 0 && (
                 <div>
                   <button
@@ -140,37 +213,6 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                       ))}
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* Suggestions */}
-              {result.suggestions?.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <Zap className="w-3 h-3 text-amber-400" />
-                    Gợi ý kết hợp ({result.suggestions.length})
-                  </p>
-                  <div className="space-y-2">
-                    {result.suggestions.map((s, i) => (
-                      <div key={i} className="p-3 rounded-lg bg-muted/10 border border-border/30 space-y-2">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-xs font-semibold text-purple-400">{s.from}</span>
-                          <ArrowRight className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-xs font-semibold text-cyan-400">{s.to}</span>
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded ml-auto ${difficultyColors[s.difficulty] || "bg-muted/40 text-muted-foreground"}`}>
-                            {s.difficulty}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">{s.reason}</p>
-                        <div className="p-2 rounded bg-primary/5 border border-primary/10">
-                          <p className="text-[11px] text-foreground">💡 {s.potential}</p>
-                        </div>
-                        <Button size="sm" variant="outline" className="w-full gap-1.5 h-7 text-xs" onClick={() => applySuggestion(s)}>
-                          <Zap className="w-3 h-3" /> Áp dụng liên kết
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
 
