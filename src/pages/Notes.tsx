@@ -53,6 +53,7 @@ const Notes = () => {
   const [currentConnections, setCurrentConnections] = useState<NodeConnection[]>([]);
   const [connectMode, setConnectMode] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("solid");
+  const [showAIPanel, setShowAIPanel] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
