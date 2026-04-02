@@ -171,6 +171,18 @@ const Notes = () => {
     setCurrentNodes((prev) => [...prev, newNode]);
   };
 
+  const handleAIAddConnection = (fromName: string, toName: string) => {
+    const fromNode = currentNodes.find((n) => n.name === fromName);
+    const toNode = currentNodes.find((n) => n.name === toName);
+    if (!fromNode || !toNode) return;
+    const exists = currentConnections.some(
+      (c) => (c.fromId === fromNode.id && c.toId === toNode.id) || (c.fromId === toNode.id && c.toId === fromNode.id)
+    );
+    if (!exists) {
+      setCurrentConnections((prev) => [...prev, { id: crypto.randomUUID(), fromId: fromNode.id, toId: toNode.id, style: "glow-cyan" }]);
+    }
+  };
+
   const selectedNote = notes.find((n) => n.id === selected);
 
   return (
