@@ -116,31 +116,31 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
   // Guide detail view
   if (guideContent) {
     return (
-      <div className="absolute top-2 right-2 w-[420px] max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
+      <div className="absolute top-2 right-2 w-[560px] max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
           <div className="flex items-center gap-2">
             <button onClick={() => setGuideContent(null)} className="p-1 rounded hover:bg-muted/40 transition-colors">
               <ArrowLeft className="w-4 h-4 text-muted-foreground" />
             </button>
             <BookOpen className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-semibold truncate max-w-[280px]">{guideTitle}</span>
+            <span className="text-sm font-semibold text-emerald-300 truncate max-w-[400px]">{guideTitle}</span>
           </div>
           <button onClick={onClose} className="p-1 rounded hover:bg-muted/40 transition-colors">
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto min-h-0 p-4">
+        <div className="flex-1 overflow-y-auto min-h-0 p-5">
           <div className="prose prose-sm prose-invert max-w-none
-            prose-headings:text-foreground prose-headings:font-bold
-            prose-h1:text-base prose-h1:mb-3 prose-h1:mt-0
-            prose-h2:text-sm prose-h2:mb-2 prose-h2:mt-4
-            prose-h3:text-xs prose-h3:mb-1.5 prose-h3:mt-3
-            prose-p:text-xs prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-2
-            prose-li:text-xs prose-li:text-muted-foreground
-            prose-strong:text-foreground
-            prose-code:text-[11px] prose-code:bg-muted/30 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-            prose-pre:bg-muted/20 prose-pre:border prose-pre:border-border/30 prose-pre:rounded-lg prose-pre:text-[11px]
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+            prose-headings:text-cyan-300 prose-headings:font-bold
+            prose-h1:text-lg prose-h1:mb-4 prose-h1:mt-0 prose-h1:text-cyan-200
+            prose-h2:text-base prose-h2:mb-3 prose-h2:mt-5 prose-h2:text-amber-300
+            prose-h3:text-sm prose-h3:mb-2 prose-h3:mt-4 prose-h3:text-purple-300
+            prose-p:text-sm prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-3
+            prose-li:text-sm prose-li:text-muted-foreground
+            prose-strong:text-emerald-300
+            prose-code:text-xs prose-code:bg-primary/10 prose-code:text-cyan-300 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+            prose-pre:bg-muted/20 prose-pre:border prose-pre:border-border/30 prose-pre:rounded-lg prose-pre:text-xs
+            prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline
           ">
             <ReactMarkdown>{guideContent}</ReactMarkdown>
           </div>
@@ -150,12 +150,12 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
   }
 
   return (
-    <div className="absolute top-2 right-2 w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
+    <div className="absolute top-2 right-2 w-[480px] max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
         <div className="flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-amber-400" />
-          <span className="text-sm font-semibold">Ý tưởng dự án AI</span>
+          <span className="text-sm font-semibold text-amber-300">Ý tưởng dự án AI</span>
         </div>
         <button onClick={onClose} className="p-1 rounded hover:bg-muted/40 transition-colors">
           <X className="w-4 h-4 text-muted-foreground" />
@@ -185,7 +185,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
             <>
               {/* Summary */}
               <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <p className="text-xs text-foreground leading-relaxed">{result.summary}</p>
+                <p className="text-xs text-amber-200/80 leading-relaxed">{result.summary}</p>
               </div>
 
               {/* Project Ideas */}
@@ -207,7 +207,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                           >
                             <span className="text-sm mt-0.5">💡</span>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-foreground">{idea.title}</p>
+                              <p className="text-xs font-semibold text-cyan-300">{idea.title}</p>
                               <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                                 {idea.nodes.map((n, j) => (
                                   <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{n}</span>
@@ -224,22 +224,22 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                             <div className="px-3 pb-3 space-y-2.5">
                               <p className="text-[11px] text-muted-foreground leading-relaxed">{idea.description}</p>
 
-                              <div className="p-2 rounded bg-primary/5 border border-primary/10 space-y-1.5">
+                              <div className="p-2.5 rounded bg-primary/5 border border-primary/10 space-y-2">
                                 <div className="flex items-start gap-1.5">
                                   <Zap className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Cách bắt đầu:</strong> {idea.howToBuild}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-amber-300">Cách bắt đầu:</strong> {idea.howToBuild}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Users className="w-3 h-3 text-cyan-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Đối tượng:</strong> {idea.targetUsers}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-cyan-300">Đối tượng:</strong> {idea.targetUsers}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Rocket className="w-3 h-3 text-purple-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Tiềm năng:</strong> {idea.potential}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-purple-300">Tiềm năng:</strong> {idea.potential}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Clock className="w-3 h-3 text-green-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Timeline:</strong> {idea.timeline}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-green-300">Timeline:</strong> {idea.timeline}</p>
                                 </div>
                               </div>
 
