@@ -185,7 +185,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
             <>
               {/* Summary */}
               <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <p className="text-xs text-foreground leading-relaxed">{result.summary}</p>
+                <p className="text-xs text-amber-200/80 leading-relaxed">{result.summary}</p>
               </div>
 
               {/* Project Ideas */}
