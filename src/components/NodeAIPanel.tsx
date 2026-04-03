@@ -155,7 +155,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
         <div className="flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-amber-400" />
-          <span className="text-sm font-semibold">Ý tưởng dự án AI</span>
+          <span className="text-sm font-semibold text-amber-300">Ý tưởng dự án AI</span>
         </div>
         <button onClick={onClose} className="p-1 rounded hover:bg-muted/40 transition-colors">
           <X className="w-4 h-4 text-muted-foreground" />
