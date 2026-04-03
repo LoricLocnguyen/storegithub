@@ -82,7 +82,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
   };
 
   return (
-    <div className="absolute top-2 right-2 w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col overflow-hidden">
+    <div className="absolute top-2 right-2 w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
         <div className="flex items-center gap-2">
