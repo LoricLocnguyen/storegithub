@@ -224,22 +224,22 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                             <div className="px-3 pb-3 space-y-2.5">
                               <p className="text-[11px] text-muted-foreground leading-relaxed">{idea.description}</p>
 
-                              <div className="p-2 rounded bg-primary/5 border border-primary/10 space-y-1.5">
+                              <div className="p-2.5 rounded bg-primary/5 border border-primary/10 space-y-2">
                                 <div className="flex items-start gap-1.5">
                                   <Zap className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Cách bắt đầu:</strong> {idea.howToBuild}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-amber-300">Cách bắt đầu:</strong> {idea.howToBuild}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Users className="w-3 h-3 text-cyan-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Đối tượng:</strong> {idea.targetUsers}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-cyan-300">Đối tượng:</strong> {idea.targetUsers}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Rocket className="w-3 h-3 text-purple-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Tiềm năng:</strong> {idea.potential}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-purple-300">Tiềm năng:</strong> {idea.potential}</p>
                                 </div>
                                 <div className="flex items-start gap-1.5">
                                   <Clock className="w-3 h-3 text-green-400 mt-0.5 shrink-0" />
-                                  <p className="text-[11px] text-foreground"><strong>Timeline:</strong> {idea.timeline}</p>
+                                  <p className="text-[11px] text-foreground"><strong className="text-green-300">Timeline:</strong> {idea.timeline}</p>
                                 </div>
                               </div>
 
