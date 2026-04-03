@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Sparkles, Loader2, Zap, Lightbulb, X, ChevronDown, ChevronUp, Clock, Users, Rocket } from "lucide-react";
+import { Sparkles, Loader2, Zap, Lightbulb, X, ChevronDown, ChevronUp, Clock, Users, Rocket, BookOpen, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { CanvasNode, NodeConnection } from "@/components/NodeMapLayer";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import ReactMarkdown from "react-markdown";
 
 interface NodeFeature {
   name: string;
@@ -47,6 +47,9 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [showFeatures, setShowFeatures] = useState(false);
   const [expandedIdea, setExpandedIdea] = useState<number | null>(0);
+  const [guideLoading, setGuideLoading] = useState<number | null>(null);
+  const [guideContent, setGuideContent] = useState<string | null>(null);
+  const [guideTitle, setGuideTitle] = useState<string>("");
   const { toast } = useToast();
 
   const analyze = async () => {
@@ -56,6 +59,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
     }
     setLoading(true);
     setResult(null);
+    setGuideContent(null);
     try {
       const { data, error } = await supabase.functions.invoke("analyze-nodes", {
         body: { nodes: nodes.map((n) => ({ name: n.name, type: n.type })) },
@@ -74,12 +78,76 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
   };
 
   const applyIdea = (idea: ProjectIdea) => {
-    // Connect all nodes mentioned in the idea
     for (let i = 0; i < idea.nodes.length - 1; i++) {
       onAddConnection(idea.nodes[i], idea.nodes[i + 1]);
     }
     toast({ title: `✅ Đã nối các node cho: ${idea.title}` });
   };
+
+  const requestGuide = async (idea: ProjectIdea, index: number) => {
+    setGuideLoading(index);
+    try {
+      const { data, error } = await supabase.functions.invoke("guide-project", {
+        body: {
+          idea: {
+            title: idea.title,
+            description: idea.description,
+            targetUsers: idea.targetUsers,
+            timeline: idea.timeline,
+            difficulty: idea.difficulty,
+            howToBuild: idea.howToBuild,
+            potential: idea.potential,
+          },
+          nodes: nodes.map((n) => ({ name: n.name, type: n.type })),
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setGuideTitle(idea.title);
+      setGuideContent(data.guide);
+      toast({ title: "📖 Hướng dẫn chi tiết đã sẵn sàng!" });
+    } catch (e: any) {
+      toast({ title: e.message || "Lỗi tạo hướng dẫn", variant: "destructive" });
+    } finally {
+      setGuideLoading(null);
+    }
+  };
+
+  // Guide detail view
+  if (guideContent) {
+    return (
+      <div className="absolute top-2 right-2 w-[420px] max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setGuideContent(null)} className="p-1 rounded hover:bg-muted/40 transition-colors">
+              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <span className="text-sm font-semibold truncate max-w-[280px]">{guideTitle}</span>
+          </div>
+          <button onClick={onClose} className="p-1 rounded hover:bg-muted/40 transition-colors">
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto min-h-0 p-4">
+          <div className="prose prose-sm prose-invert max-w-none
+            prose-headings:text-foreground prose-headings:font-bold
+            prose-h1:text-base prose-h1:mb-3 prose-h1:mt-0
+            prose-h2:text-sm prose-h2:mb-2 prose-h2:mt-4
+            prose-h3:text-xs prose-h3:mb-1.5 prose-h3:mt-3
+            prose-p:text-xs prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-2
+            prose-li:text-xs prose-li:text-muted-foreground
+            prose-strong:text-foreground
+            prose-code:text-[11px] prose-code:bg-muted/30 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+            prose-pre:bg-muted/20 prose-pre:border prose-pre:border-border/30 prose-pre:rounded-lg prose-pre:text-[11px]
+            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+          ">
+            <ReactMarkdown>{guideContent}</ReactMarkdown>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute top-2 right-2 w-80 max-h-[calc(100vh-120px)] z-30 rounded-xl border border-border/60 bg-background/95 backdrop-blur-lg shadow-2xl flex flex-col" style={{ overflow: "hidden" }}>
@@ -130,6 +198,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                   <div className="space-y-2">
                     {result.projectIdeas.map((idea, i) => {
                       const isExpanded = expandedIdea === i;
+                      const isLoadingGuide = guideLoading === i;
                       return (
                         <div key={i} className="rounded-lg bg-muted/10 border border-border/30 overflow-hidden">
                           <button
@@ -174,9 +243,20 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                                 </div>
                               </div>
 
-                              <Button size="sm" variant="outline" className="w-full gap-1.5 h-7 text-xs" onClick={() => applyIdea(idea)}>
-                                <Zap className="w-3 h-3" /> Áp dụng liên kết cho dự án này
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" className="flex-1 gap-1.5 h-7 text-xs" onClick={() => applyIdea(idea)}>
+                                  <Zap className="w-3 h-3" /> Áp dụng liên kết
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="flex-1 gap-1.5 h-7 text-xs bg-emerald-600 hover:bg-emerald-700"
+                                  onClick={() => requestGuide(idea, i)}
+                                  disabled={isLoadingGuide}
+                                >
+                                  {isLoadingGuide ? <Loader2 className="w-3 h-3 animate-spin" /> : <BookOpen className="w-3 h-3" />}
+                                  {isLoadingGuide ? "Đang tạo..." : "Hướng dẫn chi tiết"}
+                                </Button>
+                              </div>
                             </div>
                           )}
                         </div>
@@ -186,7 +266,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                 </div>
               )}
 
-              {/* Node Features (collapsed by default) */}
+              {/* Node Features */}
               {result.nodeFeatures?.length > 0 && (
                 <div>
                   <button
