@@ -207,7 +207,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
                           >
                             <span className="text-sm mt-0.5">💡</span>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-foreground">{idea.title}</p>
+                              <p className="text-xs font-semibold text-cyan-300">{idea.title}</p>
                               <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                                 {idea.nodes.map((n, j) => (
                                   <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{n}</span>
