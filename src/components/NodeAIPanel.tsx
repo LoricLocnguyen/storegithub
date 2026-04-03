@@ -224,7 +224,7 @@ const NodeAIPanel = ({ nodes, connections, onAddConnection, onClose }: NodeAIPan
             </>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
