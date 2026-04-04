@@ -5,6 +5,7 @@ import DrawingCanvas, { type Stroke } from "@/components/DrawingCanvas";
 import NodeMapLayer, { type CanvasNode, type NodeConnection } from "@/components/NodeMapLayer";
 import EntityPicker from "@/components/EntityPicker";
 import NodeAIPanel from "@/components/NodeAIPanel";
+import NodeInfoPanel from "@/components/NodeInfoPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -54,6 +55,7 @@ const Notes = () => {
   const [connectMode, setConnectMode] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("solid");
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [inspectNode, setInspectNode] = useState<CanvasNode | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -282,6 +284,7 @@ const Notes = () => {
                   onConnectionsChange={setCurrentConnections}
                   connectMode={connectMode}
                   selectedStyle={selectedStyle}
+                  onNodeClick={(node) => setInspectNode(node)}
                 />
               }
             />
@@ -300,6 +303,13 @@ const Notes = () => {
               connections={currentConnections}
               onAddConnection={handleAIAddConnection}
               onClose={() => setShowAIPanel(false)}
+            />
+          )}
+          {/* Node Info Panel */}
+          {inspectNode && (
+            <NodeInfoPanel
+              node={inspectNode}
+              onClose={() => setInspectNode(null)}
             />
           )}
         </main>

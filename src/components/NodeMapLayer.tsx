@@ -92,6 +92,7 @@ interface NodeMapLayerProps {
   onConnectionsChange: (connections: NodeConnection[]) => void;
   connectMode: boolean;
   selectedStyle: string;
+  onNodeClick?: (node: CanvasNode) => void;
 }
 
 const buildPath = (from: CanvasNode, to: CanvasNode, curveType: string) => {
@@ -138,11 +139,12 @@ const buildDoublePath = (from: CanvasNode, to: CanvasNode, offset: number) => {
   return `M${from.x + px},${from.y + py} L${to.x + px},${to.y + py}`;
 };
 
-const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, connectMode, selectedStyle }: NodeMapLayerProps) => {
+const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, connectMode, selectedStyle, onNodeClick }: NodeMapLayerProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
+  const dragMoved = useRef(false);
 
   const [editingNode, setEditingNode] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
@@ -192,15 +194,23 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
     const pt = getSvgPoint(e);
     setDragging(node.id);
     setDragOffset({ x: pt.x - node.x, y: pt.y - node.y });
+    dragMoved.current = false;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragging) return;
+    dragMoved.current = true;
     const pt = getSvgPoint(e);
     onNodesChange(nodes.map((n) => (n.id === dragging ? { ...n, x: pt.x - dragOffset.x, y: pt.y - dragOffset.y } : n)));
   };
 
-  const handleMouseUp = () => setDragging(null);
+  const handleMouseUp = () => {
+    if (dragging && !dragMoved.current) {
+      const clickedNode = nodes.find(n => n.id === dragging);
+      if (clickedNode && onNodeClick) onNodeClick(clickedNode);
+    }
+    setDragging(null);
+  };
 
   const removeNode = (id: string) => {
     onNodesChange(nodes.filter((n) => n.id !== id));
