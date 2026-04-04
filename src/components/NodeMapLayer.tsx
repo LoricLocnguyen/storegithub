@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { GitFork, Cpu, Coins, X } from "lucide-react";
+import { GitFork, Cpu, Coins, X, Palette } from "lucide-react";
 
 export interface CanvasNode {
   id: string;
