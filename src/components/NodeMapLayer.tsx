@@ -139,7 +139,7 @@ const buildDoublePath = (from: CanvasNode, to: CanvasNode, offset: number) => {
   return `M${from.x + px},${from.y + py} L${to.x + px},${to.y + py}`;
 };
 
-const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, connectMode, selectedStyle }: NodeMapLayerProps) => {
+const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, connectMode, selectedStyle, onNodeClick }: NodeMapLayerProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
