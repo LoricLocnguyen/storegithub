@@ -194,15 +194,23 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
     const pt = getSvgPoint(e);
     setDragging(node.id);
     setDragOffset({ x: pt.x - node.x, y: pt.y - node.y });
+    dragMoved.current = false;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragging) return;
+    dragMoved.current = true;
     const pt = getSvgPoint(e);
     onNodesChange(nodes.map((n) => (n.id === dragging ? { ...n, x: pt.x - dragOffset.x, y: pt.y - dragOffset.y } : n)));
   };
 
-  const handleMouseUp = () => setDragging(null);
+  const handleMouseUp = () => {
+    if (dragging && !dragMoved.current) {
+      const clickedNode = nodes.find(n => n.id === dragging);
+      if (clickedNode && onNodeClick) onNodeClick(clickedNode);
+    }
+    setDragging(null);
+  };
 
   const removeNode = (id: string) => {
     onNodesChange(nodes.filter((n) => n.id !== id));
