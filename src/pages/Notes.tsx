@@ -55,6 +55,7 @@ const Notes = () => {
   const [connectMode, setConnectMode] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("solid");
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [inspectNode, setInspectNode] = useState<CanvasNode | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
