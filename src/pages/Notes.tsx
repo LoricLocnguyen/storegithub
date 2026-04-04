@@ -284,6 +284,7 @@ const Notes = () => {
                   onConnectionsChange={setCurrentConnections}
                   connectMode={connectMode}
                   selectedStyle={selectedStyle}
+                  onNodeClick={(node) => setInspectNode(node)}
                 />
               }
             />
