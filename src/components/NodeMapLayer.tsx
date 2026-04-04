@@ -144,6 +144,7 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
+  const dragMoved = useRef(false);
 
   const [editingNode, setEditingNode] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
