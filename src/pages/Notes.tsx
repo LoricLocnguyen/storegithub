@@ -5,6 +5,7 @@ import DrawingCanvas, { type Stroke } from "@/components/DrawingCanvas";
 import NodeMapLayer, { type CanvasNode, type NodeConnection } from "@/components/NodeMapLayer";
 import EntityPicker from "@/components/EntityPicker";
 import NodeAIPanel from "@/components/NodeAIPanel";
+import NodeInfoPanel from "@/components/NodeInfoPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
