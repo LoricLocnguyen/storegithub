@@ -305,6 +305,13 @@ const Notes = () => {
               onClose={() => setShowAIPanel(false)}
             />
           )}
+          {/* Node Info Panel */}
+          {inspectNode && (
+            <NodeInfoPanel
+              node={inspectNode}
+              onClose={() => setInspectNode(null)}
+            />
+          )}
         </main>
 
         {/* Entity Picker - right panel */}
