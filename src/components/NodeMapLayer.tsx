@@ -9,7 +9,26 @@ export interface CanvasNode {
   x: number;
   y: number;
   avatarUrl?: string;
+  color?: string;
 }
+
+const NODE_COLORS = [
+  { key: "default", color: "hsl(230 25% 12%)", border: "hsl(var(--border))", label: "Mặc định" },
+  { key: "purple", color: "hsl(265 40% 18%)", border: "hsl(265 90% 65%)", label: "Tím" },
+  { key: "cyan", color: "hsl(195 40% 15%)", border: "hsl(195 80% 55%)", label: "Xanh dương" },
+  { key: "amber", color: "hsl(40 40% 15%)", border: "hsl(40 90% 55%)", label: "Vàng" },
+  { key: "green", color: "hsl(140 30% 14%)", border: "hsl(140 60% 50%)", label: "Xanh lá" },
+  { key: "red", color: "hsl(0 35% 16%)", border: "hsl(0 70% 55%)", label: "Đỏ" },
+  { key: "pink", color: "hsl(320 35% 16%)", border: "hsl(320 70% 60%)", label: "Hồng" },
+  { key: "blue", color: "hsl(220 40% 16%)", border: "hsl(220 70% 55%)", label: "Xanh" },
+  { key: "orange", color: "hsl(25 40% 16%)", border: "hsl(25 80% 55%)", label: "Cam" },
+  { key: "teal", color: "hsl(170 35% 14%)", border: "hsl(170 60% 45%)", label: "Ngọc" },
+  { key: "lime", color: "hsl(80 35% 14%)", border: "hsl(80 60% 50%)", label: "Chanh" },
+  { key: "indigo", color: "hsl(240 35% 18%)", border: "hsl(240 60% 60%)", label: "Chàm" },
+  { key: "rose", color: "hsl(350 35% 17%)", border: "hsl(350 70% 55%)", label: "Hoa hồng" },
+];
+
+const getNodeColor = (key?: string) => NODE_COLORS.find(c => c.key === key) || NODE_COLORS[0];
 
 export interface NodeConnection {
   id: string;
