@@ -144,12 +144,34 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
 
+  const [editingNode, setEditingNode] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [colorPickerNode, setColorPickerNode] = useState<string | null>(null);
+
   const getSvgPoint = useCallback((e: React.MouseEvent) => {
     const svg = svgRef.current;
     if (!svg) return { x: 0, y: 0 };
     const rect = svg.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }, []);
+
+  const handleDoubleClick = (e: React.MouseEvent, node: CanvasNode) => {
+    e.stopPropagation();
+    setEditingNode(node.id);
+    setEditName(node.name);
+  };
+
+  const commitRename = () => {
+    if (editingNode && editName.trim()) {
+      onNodesChange(nodes.map(n => n.id === editingNode ? { ...n, name: editName.trim() } : n));
+    }
+    setEditingNode(null);
+  };
+
+  const changeNodeColor = (nodeId: string, colorKey: string) => {
+    onNodesChange(nodes.map(n => n.id === nodeId ? { ...n, color: colorKey } : n));
+    setColorPickerNode(null);
+  };
 
   const handleNodeMouseDown = (e: React.MouseEvent, node: CanvasNode) => {
     e.stopPropagation();
