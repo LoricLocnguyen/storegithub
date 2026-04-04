@@ -92,6 +92,7 @@ interface NodeMapLayerProps {
   onConnectionsChange: (connections: NodeConnection[]) => void;
   connectMode: boolean;
   selectedStyle: string;
+  onNodeClick?: (node: CanvasNode) => void;
 }
 
 const buildPath = (from: CanvasNode, to: CanvasNode, curveType: string) => {
