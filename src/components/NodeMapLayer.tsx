@@ -223,13 +223,23 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
 
   const getNode = (id: string) => nodes.find((n) => n.id === id);
 
-  const renderConnection = (conn: NodeConnection) => {
+  const renderConnection = (conn: NodeConnection, index: number) => {
     const from = getNode(conn.fromId);
     const to = getNode(conn.toId);
     if (!from || !to) return null;
+    const order = index + 1;
+    const midX = (from.x + to.x) / 2;
+    const midY = (from.y + to.y) / 2;
 
     const style = getStyleByKey(conn.style);
     const markerId = style.arrow ? `arrow-${conn.id}` : undefined;
+
+    const orderBadge = (
+      <>
+        <circle cx={midX} cy={midY} r={11} fill="hsl(230 25% 12%)" stroke={style.color} strokeWidth={1.5} />
+        <text x={midX} y={midY} textAnchor="middle" dominantBaseline="central" fill={style.color} fontSize={10} fontWeight="bold">{order}</text>
+      </>
+    );
 
     // Special: zigzag
     if (conn.style === "zigzag") {
@@ -243,6 +253,7 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
             className="pointer-events-auto cursor-pointer"
             onClick={() => removeConnection(conn.id)}
           />
+          {orderBadge}
         </g>
       );
     }
@@ -253,6 +264,7 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
         <g key={conn.id}>
           <path d={buildDoublePath(from, to, 3)} fill="none" stroke={style.color} strokeWidth={style.strokeWidth} className="pointer-events-auto cursor-pointer" onClick={() => removeConnection(conn.id)} />
           <path d={buildDoublePath(from, to, -3)} fill="none" stroke={style.color} strokeWidth={style.strokeWidth} className="pointer-events-auto cursor-pointer" onClick={() => removeConnection(conn.id)} />
+          {orderBadge}
         </g>
       );
     }
@@ -299,6 +311,7 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
             <animateMotion dur="2s" repeatCount="indefinite" path={pathD} />
           </circle>
         )}
+        {orderBadge}
       </g>
     );
   };
