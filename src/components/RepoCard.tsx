@@ -1,6 +1,7 @@
 import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles, PenTool } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
+import RepoCommunity from "@/components/RepoCommunity";
 
 const langColors: Record<string, string> = {
   TypeScript: "hsl(210 100% 55%)",
