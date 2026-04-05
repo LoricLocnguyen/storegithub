@@ -76,7 +76,7 @@ export function RepoCard({ repo, isSelected, onClick }: RepoCardProps) {
 }
 
 interface RepoDetailProps {
-  repo: RepoInfo;
+  repo: RepoInfo & { uuid?: string };
 }
 
 export function RepoDetail({ repo }: RepoDetailProps) {
