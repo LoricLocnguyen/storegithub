@@ -223,10 +223,13 @@ const NodeMapLayer = ({ nodes, connections, onNodesChange, onConnectionsChange, 
 
   const getNode = (id: string) => nodes.find((n) => n.id === id);
 
-  const renderConnection = (conn: NodeConnection) => {
+  const renderConnection = (conn: NodeConnection, index: number) => {
     const from = getNode(conn.fromId);
     const to = getNode(conn.toId);
     if (!from || !to) return null;
+    const order = index + 1;
+    const midX = (from.x + to.x) / 2;
+    const midY = (from.y + to.y) / 2;
 
     const style = getStyleByKey(conn.style);
     const markerId = style.arrow ? `arrow-${conn.id}` : undefined;
