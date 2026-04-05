@@ -182,6 +182,11 @@ export function RepoDetail({ repo }: RepoDetailProps) {
       <p className="text-xs text-muted-foreground mt-8">
         Cập nhật lần cuối: {new Date(repo.updated_at).toLocaleDateString("vi-VN")}
       </p>
+
+      {/* Community section */}
+      {repo.uuid && (
+        <RepoCommunity repoId={repo.uuid} repoName={repo.full_name} repoUrl={repo.html_url} />
+      )}
     </div>
   );
 }
