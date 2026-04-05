@@ -155,6 +155,136 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      repo_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          repo_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          repo_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          repo_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repo_comments_repo_id_fkey"
+            columns: ["repo_id"]
+            isOneToOne: false
+            referencedRelation: "saved_repos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      repo_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number
+          repo_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating: number
+          repo_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number
+          repo_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repo_ratings_repo_id_fkey"
+            columns: ["repo_id"]
+            isOneToOne: false
+            referencedRelation: "saved_repos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_repos: {
         Row: {
           created_at: string
@@ -165,6 +295,7 @@ export type Database = {
           html_url: string
           id: string
           language: string | null
+          license: string | null
           name: string
           open_issues_count: number
           owner_avatar_url: string
@@ -182,6 +313,7 @@ export type Database = {
           html_url: string
           id?: string
           language?: string | null
+          license?: string | null
           name: string
           open_issues_count?: number
           owner_avatar_url: string
@@ -199,6 +331,7 @@ export type Database = {
           html_url?: string
           id?: string
           language?: string | null
+          license?: string | null
           name?: string
           open_issues_count?: number
           owner_avatar_url?: string
@@ -206,6 +339,27 @@ export type Database = {
           stargazers_count?: number
           topics?: string[] | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
         }
         Relationships: []
       }

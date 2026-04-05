@@ -1,6 +1,7 @@
 import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles, PenTool } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
+import RepoCommunity from "@/components/RepoCommunity";
 
 const langColors: Record<string, string> = {
   TypeScript: "hsl(210 100% 55%)",
@@ -75,7 +76,7 @@ export function RepoCard({ repo, isSelected, onClick }: RepoCardProps) {
 }
 
 interface RepoDetailProps {
-  repo: RepoInfo;
+  repo: RepoInfo & { uuid?: string };
 }
 
 export function RepoDetail({ repo }: RepoDetailProps) {
@@ -181,6 +182,11 @@ export function RepoDetail({ repo }: RepoDetailProps) {
       <p className="text-xs text-muted-foreground mt-8">
         Cập nhật lần cuối: {new Date(repo.updated_at).toLocaleDateString("vi-VN")}
       </p>
+
+      {/* Community section */}
+      {repo.uuid && (
+        <RepoCommunity repoId={repo.uuid} repoName={repo.full_name} repoUrl={repo.html_url} />
+      )}
     </div>
   );
 }
