@@ -10,6 +10,9 @@ import Airdrop from "./pages/Airdrop.tsx";
 import Explore from "./pages/Explore.tsx";
 import Notes from "./pages/Notes.tsx";
 import Auth from "./pages/Auth.tsx";
+import Collections from "./pages/Collections.tsx";
+import CollectionDetail from "./pages/CollectionDetail.tsx";
+import CompareRepos from "./pages/CompareRepos.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
