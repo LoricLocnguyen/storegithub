@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Plus, Archive, Trash2, Search, Zap, Compass, PenTool, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap, Compass, PenTool, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp, ChevronLeft, ChevronRight, FolderOpen, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
