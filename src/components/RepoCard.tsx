@@ -184,6 +184,11 @@ export function RepoDetail({ repo }: RepoDetailProps) {
         Cập nhật lần cuối: {new Date(repo.updated_at).toLocaleDateString("vi-VN")}
       </p>
 
+      {/* Repo Status */}
+      <div className="mt-6">
+        <RepoStatus owner={repo.owner.login} repo={repo.name} />
+      </div>
+
       {/* Community section */}
       {repo.uuid && (
         <RepoCommunity repoId={repo.uuid} repoName={repo.full_name} repoUrl={repo.html_url} />
