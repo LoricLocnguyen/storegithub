@@ -10,6 +10,9 @@ import Airdrop from "./pages/Airdrop.tsx";
 import Explore from "./pages/Explore.tsx";
 import Notes from "./pages/Notes.tsx";
 import Auth from "./pages/Auth.tsx";
+import Collections from "./pages/Collections.tsx";
+import CollectionDetail from "./pages/CollectionDetail.tsx";
+import CompareRepos from "./pages/CompareRepos.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ const App = () => (
             <Route path="/airdrop" element={<Airdrop />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/notes" element={<Notes />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/collections/:id" element={<CollectionDetail />} />
+            <Route path="/compare" element={<CompareRepos />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

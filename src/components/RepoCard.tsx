@@ -2,6 +2,7 @@ import { Star, GitFork, ExternalLink, AlertCircle, Code2, Sparkles, PenTool } fr
 import { useNavigate } from "react-router-dom";
 import type { RepoInfo } from "@/lib/github";
 import RepoCommunity from "@/components/RepoCommunity";
+import RepoStatus from "@/components/RepoStatus";
 
 const langColors: Record<string, string> = {
   TypeScript: "hsl(210 100% 55%)",
@@ -182,6 +183,11 @@ export function RepoDetail({ repo }: RepoDetailProps) {
       <p className="text-xs text-muted-foreground mt-8">
         Cập nhật lần cuối: {new Date(repo.updated_at).toLocaleDateString("vi-VN")}
       </p>
+
+      {/* Repo Status */}
+      <div className="mt-6">
+        <RepoStatus owner={repo.owner.login} repo={repo.name} />
+      </div>
 
       {/* Community section */}
       {repo.uuid && (
