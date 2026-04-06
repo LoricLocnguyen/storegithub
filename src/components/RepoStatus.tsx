@@ -77,8 +77,8 @@ const RepoStatus = ({ owner, repo }: RepoStatusProps) => {
   const CIBadge = () => {
     if (!data?.workflowStatus) return <span className="text-xs text-muted-foreground">Không có CI/CD</span>;
     const { conclusion, status } = data.workflowStatus;
-    if (status === "in_progress") return <span className="flex items-center gap-1 text-xs text-yellow-500"><Loader2 className="w-3 h-3 animate-spin" /> Đang chạy</span>;
-    if (conclusion === "success") return <span className="flex items-center gap-1 text-xs text-green-500"><CheckCircle className="w-3 h-3" /> Passed</span>;
+    if (status === "in_progress") return <span className="flex items-center gap-1 text-xs text-accent"><Loader2 className="w-3 h-3 animate-spin" /> Đang chạy</span>;
+    if (conclusion === "success") return <span className="flex items-center gap-1 text-xs text-primary"><CheckCircle className="w-3 h-3" /> Passed</span>;
     if (conclusion === "failure") return <span className="flex items-center gap-1 text-xs text-destructive"><XCircle className="w-3 h-3" /> Failed</span>;
     return <span className="text-xs text-muted-foreground">{conclusion || status}</span>;
   };
