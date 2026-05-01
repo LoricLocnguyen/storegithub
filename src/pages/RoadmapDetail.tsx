@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Map, ThumbsUp, ExternalLink, MessageSquare, Send, Loader2, GitBranch, BookOpen, Wrench, Video, FileText, Lock, Globe2 } from "lucide-react";
+import { ArrowLeft, Map as MapIcon, ThumbsUp, ExternalLink, MessageSquare, Send, Loader2, GitBranch, BookOpen, Wrench, Video, FileText, Lock, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ReactMarkdown from "react-markdown";
@@ -100,7 +100,7 @@ const RoadmapDetail = () => {
         <button onClick={() => navigate("/roadmaps")} className="w-9 h-9 rounded-full bg-muted/30 flex items-center justify-center hover:bg-muted/50">
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <Map className="w-7 h-7 text-primary animate-pulse-glow" />
+        <MapIcon className="w-7 h-7 text-primary animate-pulse-glow" />
         <h1 className="text-xl font-bold neon-text flex-1 truncate">{roadmap.title}</h1>
         {roadmap.is_public ? <Globe2 className="w-4 h-4 text-muted-foreground" /> : <Lock className="w-4 h-4 text-muted-foreground" />}
         <Button onClick={toggleVote} variant={hasVoted ? "default" : "outline"} size="sm" className="gap-2">
@@ -120,7 +120,7 @@ const RoadmapDetail = () => {
         )}
 
         <section>
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Map className="w-5 h-5 text-primary" /> Các bước ({items.length})</h2>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><MapIcon className="w-5 h-5 text-primary" /> Các bước ({items.length})</h2>
           <div className="space-y-3">
             {items.map((it, idx) => {
               const Icon = typeIcon[it.item_type] || FileText;

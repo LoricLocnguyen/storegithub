@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Map, Sparkles, Loader2, ThumbsUp, Lock, Globe2, Trash2, Search } from "lucide-react";
+import { ArrowLeft, Plus, Map as MapIcon, Sparkles, Loader2, ThumbsUp, Lock, Globe2, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -116,7 +116,7 @@ const Roadmaps = () => {
         <button onClick={() => navigate("/")} className="w-9 h-9 rounded-full bg-muted/30 flex items-center justify-center hover:bg-muted/50">
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <Map className="w-7 h-7 text-primary animate-pulse-glow" />
+        <MapIcon className="w-7 h-7 text-primary animate-pulse-glow" />
         <h1 className="text-xl font-bold neon-text">Lộ Trình Cộng Đồng</h1>
         <div className="flex-1" />
         <Dialog open={open} onOpenChange={setOpen}>
@@ -164,7 +164,7 @@ const Roadmaps = () => {
       <main className="flex-1 px-6 pb-8 overflow-y-auto scrollbar-thin">
         {filtered.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
-            <Map className="w-16 h-16 mx-auto mb-4 opacity-30" />
+            <MapIcon className="w-16 h-16 mx-auto mb-4 opacity-30" />
             <p>Chưa có lộ trình nào. Hãy tạo lộ trình đầu tiên!</p>
           </div>
         ) : (
@@ -172,7 +172,7 @@ const Roadmaps = () => {
             {filtered.map((r) => (
               <div key={r.id} className="group glass rounded-xl p-5 border border-border/50 hover:border-primary/50 transition-all cursor-pointer relative" onClick={() => navigate(`/roadmaps/${r.id}`)}>
                 <div className="flex items-start gap-2 mb-2">
-                  <Map className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <MapIcon className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <h3 className="font-bold flex-1 leading-snug">{r.title}</h3>
                   {!r.is_public && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
                 </div>
