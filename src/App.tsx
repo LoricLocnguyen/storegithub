@@ -13,6 +13,8 @@ import Auth from "./pages/Auth.tsx";
 import Collections from "./pages/Collections.tsx";
 import CollectionDetail from "./pages/CollectionDetail.tsx";
 import CompareRepos from "./pages/CompareRepos.tsx";
+import Roadmaps from "./pages/Roadmaps.tsx";
+import RoadmapDetail from "./pages/RoadmapDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
             <Route path="/collections" element={<Collections />} />
             <Route path="/collections/:id" element={<CollectionDetail />} />
             <Route path="/compare" element={<CompareRepos />} />
+            <Route path="/roadmaps" element={<Roadmaps />} />
+            <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

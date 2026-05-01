@@ -354,6 +354,156 @@ export type Database = {
           },
         ]
       }
+      roadmap_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          roadmap_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          roadmap_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          roadmap_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_comments_roadmap_id_fkey"
+            columns: ["roadmap_id"]
+            isOneToOne: false
+            referencedRelation: "roadmaps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          item_type: string
+          position: number
+          ref_repo_id: string | null
+          ref_tool_id: string | null
+          roadmap_id: string
+          title: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_type?: string
+          position?: number
+          ref_repo_id?: string | null
+          ref_tool_id?: string | null
+          roadmap_id: string
+          title: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_type?: string
+          position?: number
+          ref_repo_id?: string | null
+          ref_tool_id?: string | null
+          roadmap_id?: string
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_items_roadmap_id_fkey"
+            columns: ["roadmap_id"]
+            isOneToOne: false
+            referencedRelation: "roadmaps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_votes: {
+        Row: {
+          created_at: string
+          id: string
+          roadmap_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          roadmap_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          roadmap_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_votes_roadmap_id_fkey"
+            columns: ["roadmap_id"]
+            isOneToOne: false
+            referencedRelation: "roadmaps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmaps: {
+        Row: {
+          ai_markdown: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          tags: string[] | null
+          title: string
+          topic: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_markdown?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          tags?: string[] | null
+          title: string
+          topic?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_markdown?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          tags?: string[] | null
+          title?: string
+          topic?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_repos: {
         Row: {
           created_at: string
