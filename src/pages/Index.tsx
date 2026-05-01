@@ -16,6 +16,12 @@ const DISCOVER_CATEGORIES = [
   { key: "ai", label: "AI & ML", icon: Bot },
   { key: "programming", label: "Lập trình", icon: Code },
   { key: "trending", label: "Trending", icon: TrendingUp },
+  { key: "ai-agents", label: "AI Agents & LLM", icon: Cpu },
+  { key: "devops", label: "DevOps & Tự động hóa", icon: Workflow },
+  { key: "security", label: "An ninh & OSINT", icon: ShieldCheck },
+  { key: "gamedev", label: "Game Dev", icon: Gamepad2 },
+  { key: "web3", label: "Web3 & Blockchain", icon: Boxes },
+  { key: "devtools", label: "Năng suất Dev", icon: Wrench },
 ] as const;
 
 const ITEMS_PER_PAGE = 20;
