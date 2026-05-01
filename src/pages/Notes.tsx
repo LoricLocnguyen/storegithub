@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { PenTool, Plus, Trash2, ArrowLeft, Save, Loader2, Sparkles } from "lucide-react";
+import { PenTool, Plus, Trash2, ArrowLeft, Save, Loader2, Sparkles, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DrawingCanvas, { type Stroke } from "@/components/DrawingCanvas";
 import NodeMapLayer, { type CanvasNode, type NodeConnection } from "@/components/NodeMapLayer";
 import EntityPicker from "@/components/EntityPicker";
 import NodeAIPanel from "@/components/NodeAIPanel";
 import NodeInfoPanel from "@/components/NodeInfoPanel";
+import SmartSketchPanel from "@/components/SmartSketchPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -56,6 +57,7 @@ const Notes = () => {
   const [selectedStyle, setSelectedStyle] = useState("solid");
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [inspectNode, setInspectNode] = useState<CanvasNode | null>(null);
+  const [showSmartPanel, setShowSmartPanel] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -218,6 +220,15 @@ const Notes = () => {
               <Sparkles className="w-3.5 h-3.5" />
               Yêu cầu AI
             </Button>
+            <Button
+              onClick={() => setShowSmartPanel((p) => !p)}
+              size="sm"
+              variant={showSmartPanel ? "default" : "outline"}
+              className="gap-1.5"
+            >
+              <Lightbulb className="w-3.5 h-3.5" />
+              Gợi ý thông minh
+            </Button>
           </>
         )}
       </header>
@@ -310,6 +321,15 @@ const Notes = () => {
             <NodeInfoPanel
               node={inspectNode}
               onClose={() => setInspectNode(null)}
+            />
+          )}
+          {/* Smart Sketchbook AI suggestions */}
+          {showSmartPanel && selectedNote && (
+            <SmartSketchPanel
+              noteTitle={selectedNote.title}
+              nodes={currentNodes}
+              strokeCount={currentStrokes.length}
+              onClose={() => setShowSmartPanel(false)}
             />
           )}
         </main>
