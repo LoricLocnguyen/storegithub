@@ -18,6 +18,12 @@ serve(async (req) => {
       ai: "các repo GitHub phổ biến nhất về AI, Machine Learning, Deep Learning, LLM, và các công cụ AI (ví dụ: transformers, langchain, stable-diffusion, ollama, open-interpreter...)",
       programming: "các repo GitHub phổ biến nhất về công cụ lập trình, framework, thư viện hữu ích cho developer (ví dụ: next.js, react, rust, go, deno, bun, shadcn-ui...)",
       trending: "các repo GitHub đang trending và nổi bật gần đây trên GitHub, đặc biệt là các dự án mới và đang phát triển nhanh",
+      "ai-agents": "các repo GitHub về AI Agents, LLM Frameworks, RAG, multi-agent systems và công cụ xây dựng ứng dụng dựa trên LLM (ví dụ: langchain, llama_index, autogen, crewAI, AgentGPT, dify, langgraph, haystack, semantic-kernel...)",
+      devops: "các repo GitHub về DevOps, CI/CD, Infrastructure as Code, container orchestration và tự động hóa triển khai (ví dụ: kubernetes, docker, terraform, ansible, argo-cd, helm, github-actions, pulumi, prometheus...)",
+      security: "các repo GitHub về an ninh mạng, pentesting, OSINT, phân tích lỗ hổng và công cụ bảo mật mã nguồn mở (ví dụ: metasploit-framework, nmap, theHarvester, sherlock, OWASP, sqlmap, nuclei, trivy...)",
+      gamedev: "các repo GitHub về phát triển game, game engines, framework và thư viện làm game đa nền tảng (ví dụ: godot, phaser, three.js, bevy, pygame, love2d, raylib, openrct2...)",
+      web3: "các repo GitHub về Web3, Blockchain, smart contracts, dApps, DeFi, NFT và hệ sinh thái blockchain (ngoài airdrop) (ví dụ: solidity, hardhat, foundry, ethers.js, web3.js, wagmi, viem, openzeppelin-contracts...)",
+      devtools: "các repo GitHub về công cụ năng suất và tiện ích cho nhà phát triển: CLI tools, terminal, dotfiles, VS Code extensions, productivity apps (ví dụ: warp, zellij, lazygit, fzf, ripgrep, starship, oh-my-zsh, thefuck...)",
     };
 
     const catDesc = categoryPrompts[category] || categoryPrompts.learning;
