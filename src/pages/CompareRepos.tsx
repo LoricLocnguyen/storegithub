@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Plus, X, Star, GitFork, AlertCircle, Clock, BarChart3 } from "lucide-react";
+import { ArrowLeft, X, Star, GitFork, AlertCircle, Clock, BarChart3, Users, GitPullRequest, Activity, Scale, Sparkles, Loader2, Trophy, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,61 @@ import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
 import type { RepoInfo } from "@/lib/github";
 
+interface Enriched {
+  fullName: string;
+  contributors: number;
+  openPRs: number;
+  closedPRs: number;
+  totalCommits52w: number;
+  recentCommits4w: number;
+  license: string;
+  defaultBranch: string;
+  size: number;
+  watchers: number;
+}
+
 const CompareRepos = () => {
   const [allRepos, setAllRepos] = useState<(RepoInfo & { uuid: string })[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [enriched, setEnriched] = useState<Record<string, Enriched>>({});
+  const [verdict, setVerdict] = useState<any>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Fetch enriched + AI verdict whenever selection changes (>=2)
+  useEffect(() => {
+    const sel = selectedIds.map(id => allRepos.find(r => r.uuid === id)).filter(Boolean) as (RepoInfo & { uuid: string })[];
+    if (sel.length < 2) {
+      setVerdict(null);
+      return;
+    }
+    let cancelled = false;
+    setAiLoading(true);
+    supabase.functions.invoke("compare-repos-data", {
+      body: {
+        repos: sel.map(r => ({
+          fullName: r.full_name,
+          name: r.name,
+          stars: r.stargazers_count,
+          forks: r.forks_count,
+          issues: r.open_issues_count,
+          language: r.language,
+          description: r.description,
+        })),
+      },
+    }).then(({ data, error }) => {
+      if (cancelled || error || !data) {
+        setAiLoading(false);
+        return;
+      }
+      const map: Record<string, Enriched> = {};
+      (data.enriched || []).forEach((e: Enriched) => { map[e.fullName] = e; });
+      setEnriched(prev => ({ ...prev, ...map }));
+      setVerdict(data.verdict);
+      setAiLoading(false);
+    }).catch(() => { if (!cancelled) setAiLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedIds, allRepos]);
 
   useEffect(() => {
     const load = async () => {
