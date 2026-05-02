@@ -1,4 +1,23 @@
-// ... các dòng import giữ nguyên
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HashRouter, Route, Routes } from "react-router-dom"; // Chuyển sang HashRouter
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Index from "./pages/Index.tsx";
+import RepoAnalysis from "./pages/RepoAnalysis.tsx";
+import Airdrop from "./pages/Airdrop.tsx";
+import Explore from "./pages/Explore.tsx";
+import Notes from "./pages/Notes.tsx";
+import Auth from "./pages/Auth.tsx";
+import Collections from "./pages/Collections.tsx";
+import CollectionDetail from "./pages/CollectionDetail.tsx";
+import CompareRepos from "./pages/CompareRepos.tsx";
+import Roadmaps from "./pages/Roadmaps.tsx";
+import RoadmapDetail from "./pages/RoadmapDetail.tsx";
+import NotFound from "./pages/NotFound.tsx";
+
+const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -6,8 +25,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {/* THAY ĐỔI DÒNG NÀY: Thêm basename */}
-        <BrowserRouter basename="/storegithub">
+        {/* HashRouter giúp ứng dụng chạy mượt mà trên GitHub Pages mà không cần basename */}
+        <HashRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -20,10 +39,9 @@ const App = () => (
             <Route path="/compare" element={<CompareRepos />} />
             <Route path="/roadmaps" element={<Roadmaps />} />
             <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
