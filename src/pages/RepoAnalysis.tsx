@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, FileText, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import RepoCharts from "@/components/RepoCharts";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-repo`;
 
@@ -111,42 +113,63 @@ const RepoAnalysis = () => {
       </header>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-8">
         {error && (
           <div className="glow-card rounded-xl p-6 border-destructive/50 mb-6">
             <p className="text-destructive text-sm">{error}</p>
           </div>
         )}
 
-        {loading && !content && (
-          <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-            <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-            <p className="text-sm">AI đang phân tích repo...</p>
-          </div>
-        )}
+        <Tabs defaultValue="charts" className="w-full">
+          <TabsList className="mb-6 bg-muted/30">
+            <TabsTrigger value="charts" className="gap-2">
+              <BarChart3 className="w-4 h-4" /> Biểu đồ & Chỉ số AI
+            </TabsTrigger>
+            <TabsTrigger value="report" className="gap-2">
+              <FileText className="w-4 h-4" /> Báo cáo chi tiết
+            </TabsTrigger>
+          </TabsList>
 
-        {content && (
-          <div className="glow-card rounded-xl p-8">
-            <div className="prose prose-invert prose-sm max-w-none
-              prose-headings:neon-text prose-headings:font-bold
-              prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
-              prose-p:text-foreground/80 prose-p:leading-relaxed
-              prose-strong:text-foreground
-              prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono
-              prose-pre:bg-muted prose-pre:rounded-lg prose-pre:border prose-pre:border-border
-              prose-li:text-foreground/80
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            ">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-            </div>
-            {loading && (
-              <div className="flex items-center gap-2 mt-4 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-xs">Đang tiếp tục phân tích...</span>
+          <TabsContent value="charts">
+            {ownerName && repoName ? (
+              <RepoCharts fullName={`${ownerName}/${repoName}`} />
+            ) : (
+              <p className="text-sm text-muted-foreground">Thiếu thông tin repo.</p>
+            )}
+          </TabsContent>
+
+          <TabsContent value="report">
+            {loading && !content && (
+              <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
+                <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                <p className="text-sm">AI đang phân tích repo...</p>
               </div>
             )}
-          </div>
-        )}
+
+            {content && (
+              <div className="glow-card rounded-xl p-8">
+                <div className="prose prose-invert prose-sm max-w-none
+                  prose-headings:neon-text prose-headings:font-bold
+                  prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
+                  prose-p:text-foreground/80 prose-p:leading-relaxed
+                  prose-strong:text-foreground
+                  prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono
+                  prose-pre:bg-muted prose-pre:rounded-lg prose-pre:border prose-pre:border-border
+                  prose-li:text-foreground/80
+                  prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                ">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+                </div>
+                {loading && (
+                  <div className="flex items-center gap-2 mt-4 text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-xs">Đang tiếp tục phân tích...</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
