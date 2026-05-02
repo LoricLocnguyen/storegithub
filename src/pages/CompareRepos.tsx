@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, X, Star, GitFork, AlertCircle, Clock, BarChart3, Users, GitPullRequest, Activity, Scale, Sparkles, Loader2, Trophy, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+
 import { supabase } from "@/integrations/supabase/client";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
