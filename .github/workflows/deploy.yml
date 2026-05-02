@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -23,7 +23,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci # Dùng 'npm ci' thay vì 'npm install' cho môi trường CI để đảm bảo tính đồng nhất
+        # Thêm flag này để bỏ qua xung đột phiên bản thư viện UI
+        run: npm install --legacy-peer-deps
 
       - name: Build
         run: npm run build
