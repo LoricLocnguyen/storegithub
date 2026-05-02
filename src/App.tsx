@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Route, Routes } from "react-router-dom"; // Chuyển sang HashRouter
+import { BrowserRouter, Route, Routes } from "react-router-dom"; // Dùng BrowserRouter cho Vercel
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,8 +25,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {/* HashRouter giúp ứng dụng chạy mượt mà trên GitHub Pages mà không cần basename */}
-        <HashRouter>
+        {/* Vercel xử lý tốt BrowserRouter, không cần basename nữa */}
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -41,7 +41,7 @@ const App = () => (
             <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </HashRouter>
+        </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
