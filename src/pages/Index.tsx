@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Plus, Archive, Trash2, Search, Zap, Compass, PenTool, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp, ChevronLeft, ChevronRight, FolderOpen, BarChart3, Cpu, Workflow, ShieldCheck, Gamepad2, Boxes, Wrench, Map as MapIcon } from "lucide-react";
+import { Plus, Archive, Trash2, Search, Zap, Compass, PenTool, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp, ChevronLeft, ChevronRight, FolderOpen, BarChart3, Cpu, Workflow, ShieldCheck, Gamepad2, Boxes, Wrench, Map as MapIcon, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -204,6 +204,9 @@ const Index = () => {
         </button>
         <button onClick={() => navigate("/roadmaps")} className="w-10 h-10 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center hover:bg-secondary/30 hover:scale-110 transition-all duration-300 group" title="Lộ Trình Cộng Đồng">
           <MapIcon className="w-5 h-5 text-secondary group-hover:animate-pulse" />
+        </button>
+        <button onClick={() => navigate("/suggestions")} className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center hover:bg-primary/30 hover:scale-110 transition-all duration-300 group" title="Đề xuất Cộng đồng">
+          <Sparkles className="w-5 h-5 text-primary group-hover:animate-pulse" />
         </button>
         <div className="flex-1" />
         <span className="text-xs text-muted-foreground font-mono">{repos.length} repo{repos.length !== 1 && "s"}</span>

@@ -1,4 +1,6 @@
 import { ExternalLink, Globe, Sparkles, Tag, DollarSign, Star, Cpu, Github } from "lucide-react";
+import { useState } from "react";
+import SuggestEditDialog from "./SuggestEditDialog";
 
 export interface AITool {
   id: string;
@@ -96,6 +98,7 @@ export function AIToolCard({ tool, isSelected, onClick }: AIToolCardProps) {
 export function AIToolDetail({ tool }: { tool: AITool }) {
   const popInfo = tool.popularity ? popularityLabels[tool.popularity] : null;
   const statInfo = statusLabels[tool.status] || statusLabels.active;
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -110,6 +113,10 @@ export function AIToolDetail({ tool }: { tool: AITool }) {
           </div>
         </div>
         <div className="flex gap-2">
+          <button onClick={() => setSuggestOpen(true)} title="Đề xuất chỉnh sửa"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors text-sm font-medium">
+            <Sparkles className="w-4 h-4" /> Đề xuất sửa
+          </button>
           {tool.website_url && (
             <a href={tool.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
               <Globe className="w-4 h-4" /> Website
@@ -117,6 +124,28 @@ export function AIToolDetail({ tool }: { tool: AITool }) {
           )}
         </div>
       </div>
+
+      <SuggestEditDialog
+        open={suggestOpen}
+        onOpenChange={setSuggestOpen}
+        targetType="tool"
+        targetId={tool.id}
+        targetName={tool.name}
+        current={tool as any}
+        fields={[
+          { key: "description", label: "Mô tả", type: "textarea" },
+          { key: "website_url", label: "Website" },
+          { key: "category", label: "Danh mục" },
+          { key: "pricing", label: "Giá" },
+          { key: "popularity", label: "Mức phổ biến (popular/growing/emerging)" },
+          { key: "status", label: "Trạng thái (active/beta/discontinued)" },
+          { key: "features", label: "Tính năng", type: "textarea" },
+          { key: "use_cases", label: "Trường hợp sử dụng", type: "textarea" },
+          { key: "github_url", label: "GitHub" },
+          { key: "twitter_url", label: "Twitter" },
+          { key: "discord_url", label: "Discord" },
+        ]}
+      />
 
       {tool.description && <p className="text-foreground/80 text-base leading-relaxed mb-8">{tool.description}</p>}
 

@@ -15,6 +15,7 @@ import CollectionDetail from "./pages/CollectionDetail.tsx";
 import CompareRepos from "./pages/CompareRepos.tsx";
 import Roadmaps from "./pages/Roadmaps.tsx";
 import RoadmapDetail from "./pages/RoadmapDetail.tsx";
+import Suggestions from "./pages/Suggestions.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/compare" element={<CompareRepos />} />
             <Route path="/roadmaps" element={<Roadmaps />} />
             <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
+            <Route path="/suggestions" element={<Suggestions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

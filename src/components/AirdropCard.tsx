@@ -1,5 +1,7 @@
-import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe, PenTool } from "lucide-react";
+import { ExternalLink, Calendar, Zap, DollarSign, Shield, Globe, PenTool, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SuggestEditDialog from "./SuggestEditDialog";
 
 export interface AirdropProject {
   id: string;
@@ -195,6 +197,7 @@ interface AirdropDetailProps {
 
 export function AirdropDetail({ project }: AirdropDetailProps) {
   const navigate = useNavigate();
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const chainColor = project.blockchain ? chainColors[project.blockchain] || "hsl(var(--muted-foreground))" : undefined;
   const statusInfo = statusLabels[project.status] || statusLabels.running;
   const diffInfo = project.difficulty ? difficultyLabels[project.difficulty] : null;
@@ -228,6 +231,14 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
             <PenTool className="w-4 h-4" />
             Ghi chú
           </button>
+          <button
+            onClick={() => setSuggestOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
+            title="Đề xuất chỉnh sửa thông tin"
+          >
+            <Sparkles className="w-4 h-4" />
+            Đề xuất sửa
+          </button>
           {project.website_url && (
             <a href={project.website_url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
@@ -236,6 +247,26 @@ export function AirdropDetail({ project }: AirdropDetailProps) {
           )}
         </div>
       </div>
+
+      <SuggestEditDialog
+        open={suggestOpen}
+        onOpenChange={setSuggestOpen}
+        targetType="airdrop"
+        targetId={project.id}
+        targetName={project.name}
+        current={project as any}
+        fields={[
+          { key: "description", label: "Mô tả", type: "textarea" },
+          { key: "website_url", label: "Website" },
+          { key: "blockchain", label: "Blockchain" },
+          { key: "estimated_value", label: "Giá trị ước tính" },
+          { key: "funding", label: "Funding" },
+          { key: "twitter_url", label: "Twitter" },
+          { key: "discord_url", label: "Discord" },
+          { key: "guide", label: "Hướng dẫn", type: "textarea" },
+          { key: "status", label: "Trạng thái (running/ended/upcoming)" },
+        ]}
+      />
 
       {project.description && (
         <p className="text-foreground/80 text-base leading-relaxed mb-8">{project.description}</p>
