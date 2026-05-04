@@ -194,6 +194,72 @@ export type Database = {
         }
         Relationships: []
       }
+      edit_suggestion_votes: {
+        Row: {
+          created_at: string
+          id: string
+          suggestion_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          suggestion_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          suggestion_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      edit_suggestions: {
+        Row: {
+          applied_at: string | null
+          applied_by: string | null
+          created_at: string
+          id: string
+          proposed_changes: Json
+          reason: string | null
+          status: string
+          target_id: string
+          target_name: string | null
+          target_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string | null
+          applied_by?: string | null
+          created_at?: string
+          id?: string
+          proposed_changes?: Json
+          reason?: string | null
+          status?: string
+          target_id: string
+          target_name?: string | null
+          target_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          applied_at?: string | null
+          applied_by?: string | null
+          created_at?: string
+          id?: string
+          proposed_changes?: Json
+          reason?: string | null
+          status?: string
+          target_id?: string
+          target_name?: string | null
+          target_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           created_at: string
