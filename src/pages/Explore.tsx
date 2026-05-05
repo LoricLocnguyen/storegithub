@@ -226,25 +226,67 @@ const Explore = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-2 scrollbar-thin">
-            {filtered.length === 0 && tools.length === 0 && (
+          {allCategories.length > 0 && (
+            <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setActiveCategory("all")}
+                className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${activeCategory === "all" ? "bg-primary/20 border-primary/50 text-primary" : "bg-muted/30 border-border text-muted-foreground hover:bg-muted/50"}`}
+              >
+                Tất cả ({tools.length})
+              </button>
+              {allCategories.map((cat) => {
+                const count = tools.filter((t) => (t.category?.trim() || "Khác") === cat).length;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${activeCategory === cat ? "bg-primary/20 border-primary/50 text-primary" : "bg-muted/30 border-border text-muted-foreground hover:bg-muted/50"}`}
+                  >
+                    {cat} ({count})
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-3 scrollbar-thin">
+            {visibleTools.length === 0 && tools.length === 0 && (
               <div className="text-center py-16 text-muted-foreground">
                 <Compass className="w-12 h-12 mx-auto mb-4 opacity-30" />
                 <p className="text-sm">Chưa có AI tool nào</p>
                 <p className="text-xs mt-1">Nhập tên tool, AI sẽ tự tìm thông tin</p>
               </div>
             )}
-            {filtered.length === 0 && tools.length > 0 && (
+            {visibleTools.length === 0 && tools.length > 0 && (
               <p className="text-center py-8 text-muted-foreground text-sm">Không tìm thấy</p>
             )}
-            {filtered.map((tool) => (
-              <div key={tool.id} className="relative group">
-                <AIToolCard tool={tool} isSelected={selected === tool.id} onClick={() => setSelected(tool.id)} />
-                <button onClick={() => removeTool(tool.id)} className="absolute top-3 right-3 p-1.5 rounded-md bg-destructive/10 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/20">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
+            {groupKeys.map((cat) => {
+              const isCollapsed = collapsed[cat];
+              return (
+                <div key={cat} className="space-y-2">
+                  <button
+                    onClick={() => setCollapsed((p) => ({ ...p, [cat]: !p[cat] }))}
+                    className="w-full flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted/30 transition-colors group"
+                  >
+                    <span className="flex items-center gap-2 text-xs font-semibold text-foreground/80 uppercase tracking-wider">
+                      <span className={`inline-block transition-transform ${isCollapsed ? "-rotate-90" : ""}`}>▾</span>
+                      {cat}
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded">
+                      {grouped[cat].length}
+                    </span>
+                  </button>
+                  {!isCollapsed && grouped[cat].map((tool) => (
+                    <div key={tool.id} className="relative group">
+                      <AIToolCard tool={tool} isSelected={selected === tool.id} onClick={() => setSelected(tool.id)} />
+                      <button onClick={() => removeTool(tool.id)} className="absolute top-3 right-3 p-1.5 rounded-md bg-destructive/10 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/20">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </aside>
 
