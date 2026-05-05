@@ -162,11 +162,29 @@ const Explore = () => {
     if (selected === id) setSelected(null);
   };
 
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
   const filtered = tools.filter(
     (t) =>
       t.name.toLowerCase().includes(search.toLowerCase()) ||
       (t.category || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  const visibleTools = activeCategory === "all"
+    ? filtered
+    : filtered.filter((t) => (t.category || "Khác") === activeCategory);
+
+  const grouped = visibleTools.reduce<Record<string, AITool[]>>((acc, t) => {
+    const k = t.category?.trim() || "Khác";
+    (acc[k] ||= []).push(t);
+    return acc;
+  }, {});
+  const groupKeys = Object.keys(grouped).sort((a, b) => grouped[b].length - grouped[a].length);
+
+  const allCategories = Array.from(
+    new Set(tools.map((t) => t.category?.trim() || "Khác"))
+  ).sort();
 
   const selectedTool = tools.find((t) => t.id === selected);
 
