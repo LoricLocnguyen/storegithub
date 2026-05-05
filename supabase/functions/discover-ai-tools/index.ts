@@ -15,7 +15,15 @@ serve(async (req) => {
 
     const excludeList = (existingNames || []).map((n: string) => n.toLowerCase());
 
-    const prompt = category
+    const isHacker = category && /hack|security|pentest|hacker/i.test(category);
+    const prompt = isHacker
+      ? `Liệt kê 10 website/phần mềm/AI tool thuộc danh mục "${category}" — tập trung vào mục đích HỌC TẬP về an ninh mạng, ethical hacking, CTF, pentesting, OSINT.
+Bao gồm:
+- Các nền tảng học hack (TryHackMe, HackTheBox, PortSwigger Academy, OverTheWire, Root-Me, PicoCTF, VulnHub, HackThisSite...)
+- Các công cụ pentest/OSINT phổ biến (Kali Linux, Burp Suite, Metasploit, Nmap, Wireshark, Maltego, SpiderFoot...)
+- Các "AI dành cho hacker" / chatbot không kiểm duyệt mạnh dùng cho bảo mật (WhiteRabbitNeo, PentestGPT, HackerGPT, BurpGPT, Garak, WormGPT alternatives hợp pháp, Shodan AI, v.v.)
+LƯU Ý: chỉ liệt kê công cụ/dịch vụ HỢP PHÁP, dùng cho mục đích học và phòng thủ. KHÔNG bao gồm: ${excludeList.join(", ") || "không có"}.`
+      : category
       ? `Liệt kê 10 AI tool/phần mềm thuộc danh mục "${category}" đang phổ biến hoặc mới nổi, KHÔNG bao gồm: ${excludeList.join(", ") || "không có"}.`
       : `Liệt kê 15 AI tool và phần mềm công nghệ đáng chú ý nhất hiện nay (2024-2025), bao gồm:
 - 5 tool AI phổ biến nhất (ChatGPT, Claude, Midjourney, etc.)
@@ -37,7 +45,7 @@ KHÔNG bao gồm các tool đã có: ${excludeList.join(", ") || "không có"}.`
 QUY TẮC:
 - Chỉ trả về các tool/phần mềm THỰC SỰ tồn tại
 - website_url: Domain chính thức
-- category: AI Chatbot, AI Image, AI Code, AI Video, AI Audio, AI Writing, AI Productivity, Developer Tool, Design Tool, Data Tool, etc.
+- category: AI Chatbot, AI Image, AI Code, AI Video, AI Audio, AI Writing, AI Productivity, Developer Tool, Design Tool, Data Tool, Hacking & Security, Hacker AI, etc. (DÙNG ĐÚNG category mà người dùng yêu cầu nếu có)
 - pricing: Free, Freemium, Paid, Open Source
 - popularity: "popular" nếu phổ biến, "growing" nếu đang phát triển, "emerging" nếu mới nổi
 - description: Mô tả ngắn 1-2 câu bằng tiếng Việt

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2, MessageSquare, Image as ImageIcon, Code2, Video, Music, PenLine, Briefcase, Wrench, Palette, Database, Bot } from "lucide-react";
+import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2, MessageSquare, Image as ImageIcon, Code2, Video, Music, PenLine, Briefcase, Wrench, Palette, Database, Bot, ShieldAlert, Terminal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AIToolCard, AIToolDetail, type AITool } from "@/components/AIToolCard";
@@ -19,6 +19,8 @@ const EXPLORE_CATEGORIES = [
   { key: "Design Tool", label: "Thiết kế", icon: Palette },
   { key: "Data Tool", label: "Dữ liệu", icon: Database },
   { key: "AI Agent", label: "AI Agent", icon: Bot },
+  { key: "Hacking & Security", label: "Hacking", icon: ShieldAlert },
+  { key: "Hacker AI", label: "AI Hacker", icon: Terminal },
 ] as const;
 
 const Explore = () => {
