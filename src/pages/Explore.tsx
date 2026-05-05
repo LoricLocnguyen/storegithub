@@ -229,9 +229,25 @@ const Explore = () => {
         <Button onClick={addTool} disabled={loading || !toolName.trim()} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2">
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
         </Button>
-        <Button onClick={autoDiscover} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
+        <Button onClick={() => autoDiscover()} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
           {discovering ? <><Loader2 className="w-4 h-4 animate-spin" />Đang tìm...</> : <><Wand2 className="w-4 h-4" />Tự động khám phá</>}
         </Button>
+      </div>
+
+      <div className="px-6 pb-3 flex flex-wrap gap-2">
+        {EXPLORE_CATEGORIES.map((cat) => (
+          <Button
+            key={cat.key}
+            onClick={() => autoDiscover(cat.key)}
+            disabled={discovering || loading}
+            variant="outline"
+            size="sm"
+            className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10 text-xs"
+          >
+            {discovering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <cat.icon className="w-3.5 h-3.5" />}
+            {cat.label}
+          </Button>
+        ))}
       </div>
 
       <div className="flex flex-1 overflow-hidden">
