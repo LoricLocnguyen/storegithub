@@ -1,11 +1,25 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2 } from "lucide-react";
+import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2, MessageSquare, Image as ImageIcon, Code2, Video, Music, PenLine, Briefcase, Wrench, Palette, Database, Bot } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AIToolCard, AIToolDetail, type AITool } from "@/components/AIToolCard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+
+const EXPLORE_CATEGORIES = [
+  { key: "AI Chatbot", label: "Chatbot", icon: MessageSquare },
+  { key: "AI Image", label: "Tạo ảnh", icon: ImageIcon },
+  { key: "AI Code", label: "Lập trình", icon: Code2 },
+  { key: "AI Video", label: "Video", icon: Video },
+  { key: "AI Audio", label: "Âm thanh", icon: Music },
+  { key: "AI Writing", label: "Viết lách", icon: PenLine },
+  { key: "AI Productivity", label: "Năng suất", icon: Briefcase },
+  { key: "Developer Tool", label: "Dev Tool", icon: Wrench },
+  { key: "Design Tool", label: "Thiết kế", icon: Palette },
+  { key: "Data Tool", label: "Dữ liệu", icon: Database },
+  { key: "AI Agent", label: "AI Agent", icon: Bot },
+] as const;
 
 const Explore = () => {
   const [tools, setTools] = useState<AITool[]>([]);
@@ -92,9 +106,12 @@ const Explore = () => {
     }
   }, [toolName, toast]);
 
-  const autoDiscover = useCallback(async () => {
+  const autoDiscover = useCallback(async (category?: string) => {
     setDiscovering(true);
-    toast({ title: "🔍 AI đang tìm kiếm...", description: "Tự động liệt kê các AI tool & phần mềm phổ biến" });
+    toast({
+      title: category ? `🔍 Đang tìm "${category}"...` : "🔍 AI đang tìm kiếm...",
+      description: category ? `Tự động liệt kê các tool thuộc ${category}` : "Tự động liệt kê các AI tool & phần mềm phổ biến",
+    });
 
     try {
       const existingNames = tools.map((t) => t.name);
@@ -106,7 +123,7 @@ const Explore = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ existingNames }),
+          body: JSON.stringify({ existingNames, category }),
         }
       );
 
@@ -212,9 +229,25 @@ const Explore = () => {
         <Button onClick={addTool} disabled={loading || !toolName.trim()} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2">
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang phân tích...</> : <><Plus className="w-4 h-4" />Thêm</>}
         </Button>
-        <Button onClick={autoDiscover} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
+        <Button onClick={() => autoDiscover()} disabled={discovering || loading} variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
           {discovering ? <><Loader2 className="w-4 h-4 animate-spin" />Đang tìm...</> : <><Wand2 className="w-4 h-4" />Tự động khám phá</>}
         </Button>
+      </div>
+
+      <div className="px-6 pb-3 flex flex-wrap gap-2">
+        {EXPLORE_CATEGORIES.map((cat) => (
+          <Button
+            key={cat.key}
+            onClick={() => autoDiscover(cat.key)}
+            disabled={discovering || loading}
+            variant="outline"
+            size="sm"
+            className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10 text-xs"
+          >
+            {discovering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <cat.icon className="w-3.5 h-3.5" />}
+            {cat.label}
+          </Button>
+        ))}
       </div>
 
       <div className="flex flex-1 overflow-hidden">
