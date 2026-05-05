@@ -1,11 +1,25 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2 } from "lucide-react";
+import { Plus, Compass, Trash2, Search, ArrowLeft, Loader2, Wand2, MessageSquare, Image as ImageIcon, Code2, Video, Music, PenLine, Briefcase, Wrench, Palette, Database, Bot } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AIToolCard, AIToolDetail, type AITool } from "@/components/AIToolCard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+
+const EXPLORE_CATEGORIES = [
+  { key: "AI Chatbot", label: "Chatbot", icon: MessageSquare },
+  { key: "AI Image", label: "Tạo ảnh", icon: ImageIcon },
+  { key: "AI Code", label: "Lập trình", icon: Code2 },
+  { key: "AI Video", label: "Video", icon: Video },
+  { key: "AI Audio", label: "Âm thanh", icon: Music },
+  { key: "AI Writing", label: "Viết lách", icon: PenLine },
+  { key: "AI Productivity", label: "Năng suất", icon: Briefcase },
+  { key: "Developer Tool", label: "Dev Tool", icon: Wrench },
+  { key: "Design Tool", label: "Thiết kế", icon: Palette },
+  { key: "Data Tool", label: "Dữ liệu", icon: Database },
+  { key: "AI Agent", label: "AI Agent", icon: Bot },
+] as const;
 
 const Explore = () => {
   const [tools, setTools] = useState<AITool[]>([]);
