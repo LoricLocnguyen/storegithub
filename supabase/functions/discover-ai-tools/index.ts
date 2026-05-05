@@ -45,7 +45,7 @@ KHÔNG bao gồm các tool đã có: ${excludeList.join(", ") || "không có"}.`
 QUY TẮC:
 - Chỉ trả về các tool/phần mềm THỰC SỰ tồn tại
 - website_url: Domain chính thức
-- category: AI Chatbot, AI Image, AI Code, AI Video, AI Audio, AI Writing, AI Productivity, Developer Tool, Design Tool, Data Tool, etc.
+- category: AI Chatbot, AI Image, AI Code, AI Video, AI Audio, AI Writing, AI Productivity, Developer Tool, Design Tool, Data Tool, Hacking & Security, Hacker AI, etc. (DÙNG ĐÚNG category mà người dùng yêu cầu nếu có)
 - pricing: Free, Freemium, Paid, Open Source
 - popularity: "popular" nếu phổ biến, "growing" nếu đang phát triển, "emerging" nếu mới nổi
 - description: Mô tả ngắn 1-2 câu bằng tiếng Việt
