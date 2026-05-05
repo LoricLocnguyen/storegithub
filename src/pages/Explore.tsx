@@ -106,9 +106,12 @@ const Explore = () => {
     }
   }, [toolName, toast]);
 
-  const autoDiscover = useCallback(async () => {
+  const autoDiscover = useCallback(async (category?: string) => {
     setDiscovering(true);
-    toast({ title: "🔍 AI đang tìm kiếm...", description: "Tự động liệt kê các AI tool & phần mềm phổ biến" });
+    toast({
+      title: category ? `🔍 Đang tìm "${category}"...` : "🔍 AI đang tìm kiếm...",
+      description: category ? `Tự động liệt kê các tool thuộc ${category}` : "Tự động liệt kê các AI tool & phần mềm phổ biến",
+    });
 
     try {
       const existingNames = tools.map((t) => t.name);
@@ -120,7 +123,7 @@ const Explore = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ existingNames }),
+          body: JSON.stringify({ existingNames, category }),
         }
       );
 
