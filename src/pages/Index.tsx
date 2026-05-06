@@ -208,6 +208,9 @@ const Index = () => {
         <button onClick={() => navigate("/suggestions")} className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center hover:bg-primary/30 hover:scale-110 transition-all duration-300 group" title="Đề xuất Cộng đồng">
           <Sparkles className="w-5 h-5 text-primary group-hover:animate-pulse" />
         </button>
+        <button onClick={() => navigate("/prompts")} className="w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center hover:bg-accent/30 hover:scale-110 transition-all duration-300 group" title="Thư viện Prompt AI">
+          <Wand2 className="w-5 h-5 text-accent group-hover:animate-pulse" />
+        </button>
         <div className="flex-1" />
         <span className="text-xs text-muted-foreground font-mono">{repos.length} repo{repos.length !== 1 && "s"}</span>
         <NotificationBell />
