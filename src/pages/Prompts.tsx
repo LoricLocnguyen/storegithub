@@ -156,7 +156,7 @@ const Prompts = () => {
     let out = selectedPrompt.content;
     for (const v of variables) {
       const val = varValues[v];
-      if (val) out = out.replaceAll(`{${v}}`, val);
+      if (val) out = out.split(`{${v}}`).join(val);
     }
     return out;
   }, [selectedPrompt, variables, varValues]);
