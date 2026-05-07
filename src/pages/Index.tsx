@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Plus, Archive, Trash2, Search, Zap, Compass, PenTool, Wand2, Loader2, BookOpen, Bot, Code, TrendingUp, ChevronLeft, ChevronRight, FolderOpen, BarChart3, Cpu, Workflow, ShieldCheck, Gamepad2, Boxes, Wrench, Map as MapIcon, Sparkles } from "lucide-react";
+import { DockTabs } from "@/components/ui/dock-tabs";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -187,31 +188,9 @@ const Index = () => {
       <header className="glass border-b border-border/50 px-6 py-4 flex items-center gap-4 sticky top-0 z-20">
         <Archive className="w-7 h-7 text-primary animate-pulse-glow" />
         <h1 className="text-xl font-bold neon-text">Kho Đồ GitHub</h1>
-        <button onClick={() => navigate("/airdrop")} className="w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center hover:bg-accent/30 hover:scale-110 transition-all duration-300 group" title="Kho Airdrop">
-          <Zap className="w-5 h-5 text-accent group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/explore")} className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center hover:bg-primary/30 hover:scale-110 transition-all duration-300 group" title="Khám phá AI">
-          <Compass className="w-5 h-5 text-primary group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/notes")} className="w-10 h-10 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center hover:bg-secondary/30 hover:scale-110 transition-all duration-300 group" title="Sổ Vẽ">
-          <PenTool className="w-5 h-5 text-secondary group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/collections")} className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center hover:bg-primary/30 hover:scale-110 transition-all duration-300 group" title="Bộ Sưu Tập">
-          <FolderOpen className="w-5 h-5 text-primary group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/compare")} className="w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center hover:bg-accent/30 hover:scale-110 transition-all duration-300 group" title="So Sánh Repo">
-          <BarChart3 className="w-5 h-5 text-accent group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/roadmaps")} className="w-10 h-10 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center hover:bg-secondary/30 hover:scale-110 transition-all duration-300 group" title="Lộ Trình Cộng Đồng">
-          <MapIcon className="w-5 h-5 text-secondary group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/suggestions")} className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center hover:bg-primary/30 hover:scale-110 transition-all duration-300 group" title="Đề xuất Cộng đồng">
-          <Sparkles className="w-5 h-5 text-primary group-hover:animate-pulse" />
-        </button>
-        <button onClick={() => navigate("/prompts")} className="w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center hover:bg-accent/30 hover:scale-110 transition-all duration-300 group" title="Thư viện Prompt AI">
-          <Wand2 className="w-5 h-5 text-accent group-hover:animate-pulse" />
-        </button>
-        <div className="flex-1" />
+        <div className="flex-1 flex justify-center">
+          <DockTabs />
+        </div>
         <span className="text-xs text-muted-foreground font-mono">{repos.length} repo{repos.length !== 1 && "s"}</span>
         <NotificationBell />
         <UserMenu />
