@@ -127,11 +127,11 @@ const Auth = () => {
             >
               {isLogin ? "Chưa có tài khoản? Đăng ký" : "Đã có tài khoản? Đăng nhập"}
             </button>
+          </div>
         </div>
       </div>
       </div>
     </HeroShader>
-    </div>
   );
 };
 
