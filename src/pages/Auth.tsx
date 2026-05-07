@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, UserPlus, ArrowLeft, Loader2 } from "lucide-react";
+import HeroShader from "@/components/ui/hero-shader";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -48,7 +49,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg flex items-center justify-center p-4">
+    <HeroShader>
+      <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <button
           onClick={() => navigate("/")}
