@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, UserPlus, ArrowLeft, Loader2 } from "lucide-react";
-import HeroShader from "@/components/ui/hero-shader";
+import { SignInCard2 } from "@/components/ui/sign-in-card-2";
+import { ArrowLeft } from "lucide-react";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,7 +17,6 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -49,89 +46,27 @@ const Auth = () => {
   };
 
   return (
-    <HeroShader>
-      <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Về trang chủ
-        </button>
-
-        <div className="glow-card rounded-2xl p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-              {isLogin ? <LogIn className="w-8 h-8 text-primary" /> : <UserPlus className="w-8 h-8 text-primary" />}
-            </div>
-            <h1 className="text-2xl font-bold neon-text">
-              {isLogin ? "Đăng nhập" : "Đăng ký"}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-2">
-              {isLogin ? "Chào mừng bạn trở lại!" : "Tạo tài khoản mới"}
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Tên hiển thị</label>
-                <Input
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Tên của bạn"
-                  className="bg-muted/30"
-                />
-              </div>
-            )}
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@example.com"
-                required
-                className="bg-muted/30"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Mật khẩu</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                minLength={6}
-                className="bg-muted/30"
-              />
-            </div>
-
-            <Button type="submit" className="w-full gap-2" disabled={loading}>
-              {loading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Đang xử lý...</>
-              ) : isLogin ? (
-                <><LogIn className="w-4 h-4" />Đăng nhập</>
-              ) : (
-                <><UserPlus className="w-4 h-4" />Đăng ký</>
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isLogin ? "Chưa có tài khoản? Đăng ký" : "Đã có tài khoản? Đăng nhập"}
-            </button>
-          </div>
-        </div>
-      </div>
-      </div>
-    </HeroShader>
+    <div className="relative">
+      <button
+        onClick={() => navigate("/")}
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Về trang chủ
+      </button>
+      <SignInCard2
+        mode={isLogin ? "login" : "signup"}
+        email={email}
+        password={password}
+        displayName={displayName}
+        loading={loading}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onDisplayNameChange={setDisplayName}
+        onSubmit={handleSubmit}
+        onToggleMode={() => setIsLogin(!isLogin)}
+      />
+    </div>
   );
 };
 
