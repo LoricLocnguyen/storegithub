@@ -53,7 +53,7 @@ function DockIcon({ item, mouseX, active, onClick }: { item: DockItem; mouseX: M
       className={`relative flex items-center justify-center rounded-full border backdrop-blur-md transition-colors group ${toneClasses[item.tone]} ${active ? "ring-2 ring-offset-2 ring-offset-background ring-current shadow-[0_0_20px_currentColor]" : ""}`}
     >
       {item.icon}
-      <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-popover/90 px-2 py-1 text-xs text-popover-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-lg border border-border/50">
+      <span className="pointer-events-none absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-popover/95 px-2 py-1 text-xs text-popover-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-lg border border-border/50 z-50">
         {item.name}
       </span>
       {active && <span className="absolute -bottom-2 w-1 h-1 rounded-full bg-current" />}
