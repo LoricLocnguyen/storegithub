@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.guide-project]
 verify_jwt = false
+
+[functions.find-learning-files]
+verify_jwt = false
