@@ -17,6 +17,7 @@ import Roadmaps from "./pages/Roadmaps.tsx";
 import RoadmapDetail from "./pages/RoadmapDetail.tsx";
 import Suggestions from "./pages/Suggestions.tsx";
 import Prompts from "./pages/Prompts.tsx";
+import LearningFiles from "./pages/LearningFiles.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
             <Route path="/suggestions" element={<Suggestions />} />
             <Route path="/prompts" element={<Prompts />} />
+            <Route path="/learning" element={<LearningFiles />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
