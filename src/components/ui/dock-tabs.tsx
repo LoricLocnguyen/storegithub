@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Zap, Compass, PenTool, FolderOpen, BarChart3, Map as MapIcon, Sparkles, Wand2,
+  Zap, Compass, PenTool, FolderOpen, BarChart3, Map as MapIcon, Sparkles, Wand2, GraduationCap,
 } from "lucide-react";
 
 interface DockItem {
