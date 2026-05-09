@@ -17,6 +17,7 @@ import Roadmaps from "./pages/Roadmaps.tsx";
 import RoadmapDetail from "./pages/RoadmapDetail.tsx";
 import Suggestions from "./pages/Suggestions.tsx";
 import Prompts from "./pages/Prompts.tsx";
+import LearningFiles from "./pages/LearningFiles.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
