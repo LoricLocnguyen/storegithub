@@ -24,6 +24,7 @@ const dockItems: DockItem[] = [
   { id: "roadmaps", name: "Lộ Trình", icon: <MapIcon className="w-1/2 h-1/2" />, to: "/roadmaps", tone: "secondary" },
   { id: "suggestions", name: "Đề xuất", icon: <Sparkles className="w-1/2 h-1/2" />, to: "/suggestions", tone: "primary" },
   { id: "prompts", name: "Prompt AI", icon: <Wand2 className="w-1/2 h-1/2" />, to: "/prompts", tone: "accent" },
+  { id: "learning", name: "Tìm File Học Tập", icon: <GraduationCap className="w-1/2 h-1/2" />, to: "/learning", tone: "secondary" },
 ];
 
 const toneClasses: Record<DockItem["tone"], string> = {
