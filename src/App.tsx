@@ -44,6 +44,7 @@ const App = () => (
             <Route path="/roadmaps/:id" element={<RoadmapDetail />} />
             <Route path="/suggestions" element={<Suggestions />} />
             <Route path="/prompts" element={<Prompts />} />
+            <Route path="/learning" element={<LearningFiles />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
